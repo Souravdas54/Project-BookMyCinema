@@ -1,0 +1,917 @@
+<!-- create_show.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Show</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* [Keep all the CSS styles from the previous version] */
+        /* ... (all CSS remains the same) ... */
+
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --sidebar-width: 250px;
+            --collapsed-sidebar-width: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Main Layout Container */
+        #layout-wrapper {
+            display: flex;
+            /* min-height: 100vh; */
+        }
+
+        /* Sidebar Styles - Fixed to left */
+        #sidebar-wrapper {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            transition: all 0.3s;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        #sidebar-wrapper.collapsed {
+            width: var(--collapsed-sidebar-width);
+        }
+
+        /* Navbar Styles - Fixed to top */
+        #navbar-wrapper {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: 56px;
+            z-index: 999;
+            transition: left 0.3s;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2e59d9 100%);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        #navbar-wrapper.expanded {
+            left: var(--collapsed-sidebar-width);
+        }
+
+        /* Main Content Area */
+        #content-wrapper {
+            margin-left: var(--sidebar-width);
+            margin-top: 56px;
+            padding: 20px;
+            min-height: calc(100vh - 56px);
+            transition: margin-left 0.3s;
+            background-color: #f8f9fc;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        #content-wrapper.expanded {
+            margin-left: var(--collapsed-sidebar-width);
+            width: calc(100% - var(--collapsed-sidebar-width));
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            color: #5a5c69;
+            font-weight: 600;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 30px;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #e3e6f0;
+            font-weight: 600;
+            color: #4e73df;
+            padding: 15px 20px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-card .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        /* Table */
+        .table-responsive {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: #f8f9fc;
+            border-bottom: 2px solid #e3e6f0;
+            color: #5a5c69;
+            font-weight: 600;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+
+        /* Buttons */
+        .btn-generate {
+            background: linear-gradient(135deg, var(--success-color) 0%, #17a673 100%);
+            border: none;
+            padding: 10px 25px;
+            font-weight: 600;
+            color: white;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(28, 200, 138, 0.3);
+        }
+
+        /* Badges */
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #17a673 100%);
+        }
+
+        .badge.bg-warning {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #dda20a 100%);
+        }
+
+        .badge.bg-danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #be2617 100%);
+        }
+
+        /* Chart Canvas */
+        canvas {
+            max-width: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                transform: translateX(-100%);
+            }
+
+            #sidebar-wrapper.show {
+                transform: translateX(0);
+            }
+
+            #navbar-wrapper {
+                left: 0;
+            }
+
+            #content-wrapper {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .stat-card {
+                margin-bottom: 15px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Layout Wrapper -->
+    <div id="layout-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <%- include('../partials/sidebar.ejs') %>
+        </div>
+
+        <!-- Navbar -->
+        <div id="navbar-wrapper">
+            <%- include('../partials/navbar.ejs') %>
+        </div>
+
+        <!-- Main Content -->
+        <div id="content-wrapper">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h1><i class="fas fa-calendar-alt me-2"></i>Create New Show</h1>
+                        <p class="text-muted">Schedule a movie show in a theater</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <a href="/shows" class="btn btn-cancel me-2">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Display Success/Error Messages -->
+
+            <!-- Show Creation Form -->
+            <div class="row">
+                <div class="col-12">
+                    <form method="POST" action="/admin/shows/create" id="showForm">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-film me-2"></i>Show Information
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Basic Information -->
+                                    <div class="col-lg-8">
+                                        <!-- Movie Selection -->
+                                        <div class="row mb-4">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="theaterId" class="form-label required">Theater</label>
+                                                <select id="theaterId" name="theaterId" class="form-select" required>
+                                                    <option value="">Select Theater
+                                                    </option>
+                                                    <% if (typeof theaters !=='undefined' && theaters &&
+                                                        theaters.length) { %>
+                                                        <% theaters.forEach(t=> { %>
+                                                            <option value="<%= t._id %>"
+                                                                data-movies="<%= t.assignedMovies ? JSON.stringify(t.assignedMovies) : '[]' %>"
+                                                                data-movie-details="<%= t.assignedMoviesDetails ? JSON.stringify(t.assignedMoviesDetails) : '[]' %>"
+                                                                data-screens="<%= t.screenNumbers ? JSON.stringify(t.screenNumbers) : '[1,2,3]' %>">
+                                                                <%= t.theatername %>
+                                                            </option>
+                                                            <% }) %>
+                                                                <% } %>
+                                                </select>
+                                                <div class="form-text">Select the
+                                                    theater for this show</div>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label for="movieId" class="form-label required">Movie</label>
+                                                <select class="form-select" id="movieId" name="movieId" required
+                                                    disabled>
+                                                    <option value="">First select a
+                                                        theater</option>
+                                                </select>
+                                                <div class="form-text">Only movies
+                                                    assigned to selected theater will
+                                                    appear</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Date and Screen -->
+                                        <div class="row mb-4">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="date" class="form-label required">Show
+                                                    Date</label>
+                                                <input type="date" class="form-control" id="date" name="date"
+                                                    min="<%= new Date().toISOString().split('T')[0] %>" required>
+                                                <div class="form-text">Select the date
+                                                    for the show</div>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label for="screenNumber" class="form-label required">Screen
+                                                    Number</label>
+                                                <select class="form-select" id="screenNumber" name="screenNumber"
+                                                    required disabled>
+                                                    <option value="">First select a
+                                                        theater</option>
+                                                </select>
+                                                <div class="form-text">Select the screen
+                                                    number</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Room Configuration -->
+                                        <div class="room-config">
+                                            <h5 class="section-title">
+                                                <i class="fas fa-chair me-2"></i>Room
+                                                Configuration
+                                            </h5>
+
+                                            <div class="row mb-3">
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="roomName" class="form-label required">Room
+                                                        Name</label>
+                                                    <input type="text" class="form-control" id="roomName"
+                                                        name="room[name]" placeholder="e.g., Main Hall, VIP Lounge"
+                                                        required>
+                                                    <div class="form-text">Main Hall,
+                                                        VIP Lounge</div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="roomRows" class="form-label required">Number
+                                                        of
+                                                        Rows</label>
+                                                    <input type="number" class="form-control" id="roomRows"
+                                                        name="room[rows]" min="5" max="30" value="10" required>
+                                                    <div class="form-text">Typically
+                                                        5-30 rows</div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="roomColumns" class="form-label required">Seats
+                                                        per
+                                                        Row</label>
+                                                    <input type="number" class="form-control" id="roomColumns"
+                                                        name="room[columns]" min="5" max="30" value="15" required>
+                                                    <div class="form-text">Typically
+                                                        5-30 seats per row</div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Seat Layout Preview -->
+                                            <div class="seat-layout-preview">
+                                                <h6 class="preview-title">Seat Layout
+                                                    Preview</h6>
+                                                <div class="seat-grid" id="seatPreview">
+                                                    <div class="text-muted">Seat layout
+                                                        will be generated based on rows
+                                                        and columns</div>
+                                                    <div class="mt-3">
+                                                        <small class="text-muted">Total
+                                                            Seats: <span id="totalSeats">150</span></small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Time Slots -->
+                                        <div class="mt-4">
+                                            <h5 class="section-title">
+                                                <i class="fas fa-clock me-2"></i>Time
+                                                Slots
+                                            </h5>
+                                            <div class="form-text mb-3">Add one or more
+                                                time slots for this show</div>
+
+                                            <!-- Time Slots Container -->
+                                            <div id="timeSlotsContainer">
+                                                <!-- Time slots will be added here dynamically -->
+                                            </div>
+
+                                            <!-- Add Time Slot Button -->
+                                            <button type="button" id="addTimeSlotBtn" class="btn btn-primary mb-4"
+                                                style="float: right;">
+                                                <i class="fas fa-plus me-2"></i>Add New
+                                                Time Slot
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Show Preview & Instructions -->
+                                    <div class="col-lg-4">
+                                        <!-- Instructions -->
+                                        <!-- <div class="card mt-4">
+                                            <div class="card-header">
+                                                <i class="fas fa-info-circle me-2"></i>Instructions
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <h6 class="text-primary mb-2">
+                                                        <i class="fas fa-check-circle me-2"></i>Required
+                                                        Fields
+                                                    </h6>
+                                                    <ul class="small">
+                                                        <li>Select Movie and Theater
+                                                        </li>
+                                                        <li>Choose Show Date and Screen
+                                                        </li>
+                                                        <li>Configure Room Layout</li>
+                                                        <li>Add at least one Time Slot
+                                                        </li>
+                                                        <li>Set prices for all
+                                                            categories</li>
+                                                    </ul>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <h6 class="text-success mb-2">
+                                                        <i class="fas fa-lightbulb me-2"></i>Tips
+                                                    </h6>
+                                                    <ul class="small">
+                                                        <li>Multiple time slots can be
+                                                            added for same day</li>
+                                                        <li>Room configuration
+                                                            determines total seats</li>
+                                                        <li>Prices can vary by time slot
+                                                        </li>
+                                                        <li>Show will be automatically
+                                                            validated for conflicts</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                    </div>
+
+                                    <!-- Form Actions -->
+                                    <div class="row mt-4">
+                                        <div class="col-12 text-end">
+                                            <button type="reset" class="btn btn-cancel me-3">
+                                                <i class="fas fa-redo me-2"></i>Reset
+                                                Form
+                                            </button>
+                                            <button type="submit" class="btn btn-submit"
+                                                style="color: white;background-color: #2e59d9;">
+                                                <i class="fas fa-save me-2"></i>Create
+                                                Show
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keep all your existing HTML and CSS -->
+
+    <script>
+        // DYNAMIC TIME SLOT SYSTEM
+        let slotIndex = 0; // Start from 1 since the first one is static
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const existingAddBtn = document.getElementById('addTimeSlotBtn');
+            const slotContainer = document.querySelector(".mt-4");
+
+            // Remove any duplicate button that might be created by old code
+            const duplicateButtons = document.querySelectorAll('.btn-primary[type="button"]');
+            duplicateButtons.forEach(btn => {
+                if (btn !== existingAddBtn && btn.textContent.includes('Add New Time Slot')) {
+                    btn.remove();
+                }
+            });
+
+            // ============== FIX 2: Initialize with one time slot ==============
+            // Add initial time slot
+            addTimeSlot();
+
+            // ============== FIX 3: Add event listener to existing button ==============
+            if (existingAddBtn) {
+                existingAddBtn.addEventListener("click", () => {
+                    const newSlotHTML = generateTimeSlotHTML(slotIndex);
+                    const timeSlotsSection = document.getElementById('timeSlotsContainer');
+                    if (timeSlotsSection) {
+                        timeSlotsSection.insertAdjacentHTML("beforeend", newSlotHTML);
+                        slotIndex++;
+                    }
+                });
+            }
+
+            // ============== FIX 4: Handle delete buttons properly ==============
+            // Use event delegation for dynamically added delete buttons
+            document.addEventListener("click", function (e) {
+                if (e.target.classList.contains("delete-slot") ||
+                    e.target.closest(".delete-slot")) {
+                    const deleteBtn = e.target.classList.contains("delete-slot") ?
+                        e.target : e.target.closest(".delete-slot");
+                    const timeSlotCard = deleteBtn.closest(".time-slot-card");
+                    if (timeSlotCard) {
+                        timeSlotCard.remove();
+                    }
+                }
+            });
+        });
+
+        // ============== FIX 5: Function to add initial time slot ==============
+        function addTimeSlot() {
+            const timeSlotsSection = document.getElementById('timeSlotsContainer');
+            if (timeSlotsSection) {
+                const newSlotHTML = generateTimeSlotHTML(slotIndex);
+                timeSlotsSection.insertAdjacentHTML("beforeend", newSlotHTML);
+                slotIndex++;
+            }
+        }
+
+        // Generate HTML For Time Slot
+        function generateTimeSlotHTML(i) {
+            return `
+<div class="time-slot-card card mb-3" style="border: 1px solid #e3e6f0; border-radius: 10px;">
+    <div class="card-header d-flex justify-content-between align-items-center" style="background: #f8f9fc;">
+        <div class="time-slot-title" style="font-weight: 600; color: #4e73df;">
+            <i class="fas fa-clock me-2"></i>Time Slot ${i + 1}
+        </div>
+        <button type="button" class="btn btn-danger btn-sm delete-slot" style="padding: 5px 10px;">
+            <i class="fas fa-trash"></i> Remove
+        </button>
+    </div>
+    
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label required">Show Time</label>
+                <select class="form-select" name="timeSlots[${i}][time]" required>
+                    <option value="">Select Time</option>
+                    <option value="09:00 AM">09:00 AM</option>
+                    <option value="12:00 PM">12:00 PM</option>
+                    <option value="03:00 PM">03:00 PM</option>
+                    <option value="06:00 PM">06:00 PM</option>
+                    <option value="09:00 PM">09:00 PM</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <h6 class="mb-3" style="color: #5a5c69;">
+                <i class="fas fa-tags me-2"></i>Price Categories
+            </h6>
+
+            <div class="row">
+
+                    <div class="col-md-3 mb-3">
+                    <label class="form-label">Platinum</label>
+                    <div class="input-group">
+                        <span class="input-group-text">₹</span>
+                        <input type="number" class="form-control"
+                            name="timeSlots[${i}][availableCategories][0][price]"
+                            min="50" step="1" value="180" required>
+                        <input type="hidden"
+                            name="timeSlots[${i}][availableCategories][0][category]"
+                            value="Platinum">
+                    </div>
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Golden</label>
+                    <div class="input-group">
+                        <span class="input-group-text">₹</span>
+                        <input type="number" class="form-control"
+                            name="timeSlots[${i}][availableCategories][1][price]"
+                            min="50" step="1" value="200" required>
+                        <input type="hidden"
+                            name="timeSlots[${i}][availableCategories][1][category]"
+                            value="Golden">
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Diamond</label>
+                    <div class="input-group">
+                        <span class="input-group-text">₹</span>
+                        <input type="number" class="form-control"
+                            name="timeSlots[${i}][availableCategories][2][price]"
+                            min="50" step="1" value="220" required>
+                        <input type="hidden"
+                            name="timeSlots[${i}][availableCategories][2][category]"
+                            value="Diamond">
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Royal</label>
+                    <div class="input-group">
+                        <span class="input-group-text">₹</span>
+                        <input type="number" class="form-control"
+                            name="timeSlots[${i}][availableCategories][3][price]"
+                            min="50" step="1" value="250" required>
+                        <input type="hidden"
+                            name="timeSlots[${i}][availableCategories][3][category]"
+                            value="Royal">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>`;
+        }
+
+        // Theater selection to load assigned movies
+        document.addEventListener("DOMContentLoaded", function () {
+            const theaterSelect = document.getElementById('theaterId');
+            const movieSelect = document.getElementById('movieId');
+            const screenSelect = document.getElementById('screenNumber');
+
+            if (theaterSelect) {
+                theaterSelect.addEventListener('change', async function () {
+                    const theaterId = this.value;
+
+                    if (!theaterId) {
+                        movieSelect.innerHTML = '<option value="">Select Movie</option>';
+                        movieSelect.disabled = true;
+                        screenSelect.innerHTML = '<option value="">Select Screen</option>';
+                        screenSelect.disabled = true;
+                        return;
+                    }
+
+                    try {
+                        // Fetch theater details to get assigned movies and screens
+                        const response = await fetch(`/admin/assigned-movie/${theaterId}`);
+                        const result = await response.json();
+
+                        if (result.success) {
+                            const theater = result.data;
+                            // Clear movie options
+                            movieSelect.innerHTML = '<option value="">Select Movie</option>';
+                            movieSelect.disabled = false;
+
+                            //  assigned movies
+                            if (theater.assignedMoviesDetails && theater.assignedMoviesDetails.length > 0) {
+                                theater.assignedMoviesDetails.forEach(movie => {
+                                    const option = document.createElement('option');
+                                    option.value = movie._id;
+                                    option.textContent = movie.moviename || "Unknown Movie";
+                                    movieSelect.appendChild(option);
+                                });
+                            } else {
+                                const option = document.createElement('option');
+                                option.value = "";
+                                option.textContent = "No movies assigned to this theater";
+                                option.disabled = true;
+                                movieSelect.appendChild(option);
+                                movieSelect.disabled = true;
+                            }
+
+                            //  screen numbers
+                            screenSelect.innerHTML = '<option value="">Select Screen</option>';
+                            screenSelect.disabled = false;
+
+                            let screens = [];
+                            if (Array.isArray(theater.screens)) {
+                                // If screens is already an array
+                                screens = theater.screens;
+                            } else if (typeof theater.screens === 'string') {
+                                // If screens is a string like "screen 3"
+                                // Extract number from string
+                                const match = theater.screens.match(/\d+/);
+                                if (match) {
+                                    screens = [parseInt(match[0])];
+                                } else {
+                                    // If no number found, use default
+                                    screens = [1];
+                                }
+                            } else if (typeof theater.screenNumbers === 'string') {
+                                // Try screenNumbers field
+                                const match = theater.screenNumbers.match(/\d+/);
+                                if (match) {
+                                    screens = [parseInt(match[0])];
+                                } else {
+                                    screens = [1];
+                                }
+                            } else {
+                                // Default fallback
+                                screens = [1, 2, 3];
+                            }
+
+                            // Populate screen dropdown
+                            if (screens.length > 0) {
+                                screens.forEach(screen => {
+                                    const option = document.createElement('option');
+                                    // Store the full screen name including "Screen" prefix
+                                    const screenValue = `Screen ${screen}`;
+                                    option.value = screenValue;
+                                    option.textContent = screenValue;
+                                    screenSelect.appendChild(option);
+                                });
+
+                            } else {
+                                const option = document.createElement('option');
+                                option.value = "";
+                                option.textContent = "No screens available";
+                                option.disabled = true;
+                                screenSelect.appendChild(option);
+                                screenSelect.disabled = true;
+                            }
+                        } else {
+                            console.error('API error:', result.message);
+                            movieSelect.innerHTML = '<option value="">Error loading movies</option>';
+                            movieSelect.disabled = true;
+                            screenSelect.innerHTML = '<option value="">Error loading screens</option>';
+                            screenSelect.disabled = true;
+                        }
+                    } catch (error) {
+                        console.error('Error fetching theater details:', error);
+                        movieSelect.innerHTML = '<option value="">Network error</option>';
+                        movieSelect.disabled = true;
+                        screenSelect.innerHTML = '<option value="">Network error</option>';
+                        screenSelect.disabled = true;
+                    }
+                });
+            }
+
+            // Calculate total seats based on rows and columns
+            const roomRows = document.getElementById('roomRows');
+            const roomColumns = document.getElementById('roomColumns');
+            const totalSeats = document.getElementById('totalSeats');
+
+            if (roomRows && roomColumns && totalSeats) {
+                const calculateSeats = () => {
+                    const rows = parseInt(roomRows.value) || 0;
+                    const cols = parseInt(roomColumns.value) || 0;
+                    const total = rows * cols;
+                    totalSeats.textContent = total;
+                };
+
+                roomRows.addEventListener('input', calculateSeats);
+                roomColumns.addEventListener('input', calculateSeats);
+
+                calculateSeats()
+            }
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- <script>
+
+        // DYNAMIC TIME SLOT SYSTEM
+
+
+        let slotIndex = 1; // 0 already exists in your form
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const slotContainer = document.querySelector(".mt-4"); // Timeslot parent
+            const addBtn = document.createElement("button");
+
+            addBtn.textContent = "Add New Slot";
+            addBtn.type = "button";
+            addBtn.className = "btn btn-primary mb-3";
+            addBtn.style.float = "right";
+
+            slotContainer.prepend(addBtn);
+
+            addBtn.addEventListener("click", () => {
+                const newSlotHTML = generateTimeSlotHTML(slotIndex);
+                slotContainer.insertAdjacentHTML("beforeend", newSlotHTML);
+                slotIndex++;
+            });
+
+            // Delete Slot Handler
+            document.addEventListener("click", function (e) {
+                if (e.target.classList.contains("delete-slot")) {
+                    e.target.closest(".time-slot-card").remove();
+                }
+            });
+        });
+
+
+        // Generate HTML For Slot
+
+        function generateTimeSlotHTML(i) {
+            return `
+    <div class="time-slot-card">
+        <div class="time-slot-header d-flex justify-content-between">
+            <div class="time-slot-title">Time Slot ${i + 1}</div>
+            <button type="button" class="btn btn-danger btn-sm delete-slot">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4 mb-3">
+                <label class="form-label required">Show Time</label>
+                <select class="form-select" name="timeSlots[${i}][time]" required>
+                    <option value="">Select</option>
+                    <option value="09:00 AM">09:00 AM</option>
+                    <option value="12:00 PM">12:00 PM</option>
+                    <option value="03:00 PM">03:00 PM</option>
+                    <option value="06:00 PM">06:00 PM</option>
+                    <option value="09:00 PM">09:00 PM</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <h6 class="mb-3">Price Categories</h6>
+
+            ${generateCategoryHTML(i, "Golden", 0, 200)}
+            ${generateCategoryHTML(i, "Platinum", 1, 300)}
+            ${generateCategoryHTML(i, "Diamond", 2, 400)}
+            ${generateCategoryHTML(i, "Royal", 3, 500)}
+        </div>
+    </div>`;
+        }
+
+
+        //  Category HTML
+
+        function generateCategoryHTML(i, name, index, price) {
+            return `
+    <div class="category-card">
+        <div class="category-header">
+            <div class="category-name">${name}</div>
+        </div>
+        <div class="price-input-group">
+            <span class="price-label">Price:</span>
+            <div class="input-group" style="width: 200px;">
+                <span class="input-group-text">₹</span>
+                <input type="number" class="form-control"
+                    name="timeSlots[${i}][availableCategories][${index}][price]"
+                    min="50" step="50" value="${price}" required>
+                <input type="hidden"
+                    name="timeSlots[${i}][availableCategories][${index}][category]"
+                    value="${name}">
+            </div>
+        </div>
+    </div>`;
+        }
+    </script> -->
+
+</body>
+
+</html>

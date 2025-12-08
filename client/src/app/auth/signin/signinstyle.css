@@ -1,0 +1,595 @@
+/* signinstyle.css */
+.login-modal-container {
+  position: relative;
+  background: white;
+  width: 100%;
+}
+
+.login-modal-container .login-card {
+  background: white;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 48px 40px;
+  /* width: 100%; */
+  max-width: 100%;
+  margin: 0;
+  animation: none;
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.logo-icon {
+  font-size: 48px !important;
+  color: #eb252f;
+  margin-bottom: 24px;
+}
+
+.login-title {
+  font-size: 30px;
+  font-weight: 700;
+  max-width: 100%;
+  color: #111827;
+  text-align: center;
+  margin-bottom: 12px;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.login-subtitle {
+  font-size: 16px;
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 40px;
+  line-height: 1.5;
+  font-weight: 400;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.login-form {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+  line-height: 1.25;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  background: white;
+  color: #111827;
+  line-height: 1.5;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  box-sizing: border-box;
+}
+
+.form-input::placeholder {
+  color: #9ca3af;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background: white;
+}
+
+.form-input:hover {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.remember-checkbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  background: white;
+  transition: all 0.2s ease;
+  margin: 0;
+}
+
+.remember-checkbox:checked {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.remember-label {
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  font-weight: 400;
+  line-height: 1.25;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.forgot-link {
+  font-size: 14px;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  line-height: 1.25;
+  transition: color 0.2s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+  color: #1d4ed8;
+}
+
+.login-button {
+  width: 100%;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 24px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.5;
+  letter-spacing: 0.025em;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-button:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.login-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 32px 0;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+.divider-text {
+  padding: 0 16px;
+  line-height: 1.25;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.google-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 32px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.5;
+  min-height: 48px;
+}
+
+.google-button:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.google-icon {
+  font-size: 20px !important;
+  color: #db4437;
+}
+
+.signup-link {
+  text-align: center;
+  font-size: 16px;
+  color: #6b7280;
+  line-height: 1.5;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.signup-link a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 4px;
+  transition: color 0.2s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+  color: #1d4ed8;
+}
+
+/* Loading state */
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Error states */
+.form-input.error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 14px;
+  margin-top: 6px;
+  font-weight: 400;
+  line-height: 1.25;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Dialog customization */
+.MuiDialog-paper {
+  margin: 20px;
+  border-radius: 16px !important;
+  overflow: hidden;
+  max-width: 448px !important;
+}
+
+.MuiDialogContent-root {
+  padding: 0 !important;
+}
+
+/* Ensure modal is centered properly */
+.MuiDialog-container {
+  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Close button styling */
+.MuiIconButton-root {
+  transition: all 0.2s ease !important;
+}
+
+.MuiIconButton-root:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Responsive Design */
+
+/* XXL Screens (1400px and above) */
+@media (min-width: 1400px) {
+  .login-modal-container .login-card {
+    padding: 56px 48px;
+  }
+
+  .login-title {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .login-subtitle {
+    font-size: 18px;
+    margin-bottom: 48px;
+  }
+
+  .form-input {
+    padding: 16px 20px;
+    font-size: 18px;
+    border-radius: 10px;
+  }
+
+  .form-input::placeholder {
+    font-size: 18px;
+  }
+
+  .login-button,
+  .google-button {
+    padding: 16px 20px;
+    font-size: 18px;
+    border-radius: 10px;
+    min-height: 56px;
+  }
+
+  .form-label,
+  .remember-label,
+  .forgot-link,
+  .signup-link {
+    font-size: 16px;
+  }
+
+  .logo-icon {
+    font-size: 56px !important;
+  }
+}
+
+/* XL Screens (1200px to 1399px) */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .login-modal-container .login-card {
+    padding: 48px 40px;
+  }
+
+  .login-title {
+    font-size: 28px;
+  }
+
+  .logo-icon {
+    font-size: 52px !important;
+  }
+}
+
+/* LG Screens (992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .login-modal-container .login-card {
+    padding: 44px 36px;
+  }
+
+  .login-title {
+    font-size: 26px;
+  }
+
+  .logo-icon {
+    font-size: 48px !important;
+  }
+}
+
+/* MD Screens (768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .MuiDialog-paper {
+    margin: 24px;
+    max-width: 400px !important;
+  }
+
+  .login-modal-container .login-card {
+    padding: 40px 32px;
+  }
+
+  .login-title {
+    font-size: 24px;
+  }
+
+  .logo-icon {
+    font-size: 44px !important;
+  }
+}
+
+/* SM Screens (576px to 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .MuiDialog-paper {
+    margin: 20px;
+    max-width: 380px !important;
+  }
+
+  .login-modal-container .login-card {
+    padding: 36px 28px;
+  }
+
+  .logo-icon {
+    font-size: 44px !important;
+    margin-bottom: 20px;
+  }
+
+  .login-title {
+    font-size: 22px;
+  }
+
+  .login-subtitle {
+    font-size: 15px;
+  }
+}
+
+/* XS Screens (below 576px) */
+@media (max-width: 575px) {
+  .MuiDialog-paper {
+    margin: 16px;
+    border-radius: 12px !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+
+  .login-modal-container .login-card {
+    padding: 32px 24px;
+  }
+
+  .logo-icon {
+    font-size: 40px !important;
+    margin-bottom: 16px;
+  }
+
+  .login-title {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .login-subtitle {
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-input {
+    padding: 11px 14px;
+    font-size: 16px;
+  }
+
+  .form-input::placeholder {
+    font-size: 16px;
+  }
+
+  .remember-forgot {
+    margin-bottom: 28px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .login-button,
+  .google-button {
+    padding: 12px 14px;
+    font-size: 16px;
+    margin-bottom: 28px;
+    min-height: 44px;
+  }
+
+  .divider {
+    margin: 28px 0;
+  }
+
+  .signup-link {
+    font-size: 15px;
+  }
+}
+
+/* Extra Small Devices (below 400px) */
+@media (max-width: 400px) {
+  .MuiDialog-paper {
+    margin: 12px;
+    border-radius: 10px !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+
+  .login-modal-container .login-card {
+    padding: 28px 20px;
+  }
+
+  .logo-icon {
+    font-size: 36px !important;
+    margin-bottom: 12px;
+  }
+
+  .login-title {
+    font-size: 10px;
+    max-width: 100%;
+  }
+
+  .login-subtitle {
+    font-size: 13px;
+    margin-bottom: 28px;
+  }
+
+  .form-input {
+    padding: 10px 12px;
+    font-size: 15px;
+  }
+
+  .form-input::placeholder {
+    font-size: 15px;
+  }
+
+  .login-button,
+  .google-button {
+    padding: 11px 12px;
+    font-size: 15px;
+    min-height: 42px;
+  }
+
+  .remember-label,
+  .forgot-link,
+  .signup-link {
+    font-size: 14px;
+  }
+
+  .divider-text {
+    font-size: 13px;
+  }
+}
+
+/* Focus accessibility */
+.form-input:focus-visible,
+.login-button:focus-visible,
+.google-button:focus-visible,
+.remember-checkbox:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for all interactive elements */
+.form-input,
+.login-button,
+.google-button,
+.remember-checkbox,
+.forgot-link,
+.signup-link a {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Loading spinner alignment */
+.login-button:disabled {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Material-UI Dialog overrides */
+.MuiDialog-scrollPaper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure proper z-index for close button */
+.MuiIconButton-root {
+  z-index: 10;
+}

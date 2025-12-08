@@ -1,0 +1,895 @@
+movie.list page
+<!-- movies_list.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies List</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --sidebar-width: 250px;
+            --collapsed-sidebar-width: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Main Layout Container */
+        #layout-wrapper {
+            display: flex;
+            /* min-height: 100vh; */
+        }
+
+        /* Sidebar Styles - Fixed to left */
+        #sidebar-wrapper {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            transition: all 0.3s;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        #sidebar-wrapper.collapsed {
+            width: var(--collapsed-sidebar-width);
+        }
+
+        /* Navbar Styles - Fixed to top */
+        #navbar-wrapper {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: 56px;
+            z-index: 999;
+            transition: left 0.3s;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2e59d9 100%);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        #navbar-wrapper.expanded {
+            left: var(--collapsed-sidebar-width);
+        }
+
+        /* Main Content Area */
+        #content-wrapper {
+            margin-left: var(--sidebar-width);
+            margin-top: 56px;
+            padding: 20px;
+            min-height: calc(100vh - 56px);
+            transition: margin-left 0.3s;
+            background-color: #f8f9fc;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        #content-wrapper.expanded {
+            margin-left: var(--collapsed-sidebar-width);
+            width: calc(100% - var(--collapsed-sidebar-width));
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 30px;
+        }
+        
+        .page-header h1 {
+            color: #5a5c69;
+            font-weight: 600;
+        }
+        
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 30px;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #e3e6f0;
+            font-weight: 600;
+            color: #4e73df;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0 !important;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+        
+        /* Table Styles */
+        .table-responsive {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .table {
+            margin-bottom: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table thead th {
+            background-color: #f8f9fc;
+            border-bottom: 2px solid #e3e6f0;
+            color: #5a5c69;
+            font-weight: 600;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid #e3e6f0;
+        }
+
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+
+        /* Movie Poster in Table */
+        .movie-poster {
+            width: 60px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .movie-poster:hover {
+            transform: scale(1.1);
+        }
+
+        /* Badges */
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #17a673 100%);
+        }
+        
+        .badge.bg-warning {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #dda20a 100%);
+        }
+        
+        .badge.bg-danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #be2617 100%);
+        }
+        
+        .badge.bg-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2e59d9 100%);
+        }
+        
+        .badge.bg-info {
+            background: linear-gradient(135deg, var(--info-color) 0%, #258391 100%);
+        }
+
+        /* Star Rating */
+        .star-rating {
+            color: #f6c23e;
+            font-size: 0.9rem;
+        }
+
+        .star-rating .empty {
+            color: #ddd;
+        }
+
+        /* Buttons */
+        .btn-add {
+            background: linear-gradient(135deg, var(--success-color) 0%, #17a673 100%);
+            border: none;
+            padding: 10px 25px;
+            font-weight: 600;
+            color: white;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(28, 200, 138, 0.3);
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, var(--info-color) 0%, #258391 100%);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(54, 185, 204, 0.3);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #be2617 100%);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(231, 74, 59, 0.3);
+        }
+
+        .btn-promote {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #dda20a 100%);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .btn-promote:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(246, 194, 62, 0.3);
+        }
+
+        /* Action Buttons Group */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Search and Filter */
+        .search-filter-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #e3e6f0;
+            border-radius: 6px;
+            padding: 10px 15px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        /* Pagination */
+        .pagination {
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .page-link {
+            color: var(--primary-color);
+            border: 1px solid #e3e6f0;
+            margin: 0 3px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .page-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .page-item.active .page-link {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2e59d9 100%);
+            border-color: var(--primary-color);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            color: var(--secondary-color);
+            opacity: 0.5;
+            margin-bottom: 20px;
+        }
+
+        /* Statistics Cards */
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            text-align: center;
+        }
+
+        .stats-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stats-label {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        /* Movie Details Modal */
+        .movie-details-modal .modal-content {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 0.5rem 2rem 0 rgba(58, 59, 69, 0.2);
+        }
+
+        .movie-details-modal .modal-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2e59d9 100%);
+            color: white;
+            border-radius: 10px 10px 0 0;
+            border: none;
+        }
+
+        .movie-details-modal .modal-body {
+            padding: 30px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                transform: translateX(-100%);
+            }
+            
+            #sidebar-wrapper.show {
+                transform: translateX(0);
+            }
+            
+            #navbar-wrapper {
+                left: 0;
+            }
+            
+            #content-wrapper {
+                margin-left: 0;
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .table-responsive {
+                margin: 0 -15px;
+                border-radius: 0;
+            }
+            
+            .table thead {
+                display: none;
+            }
+            
+            .table, .table tbody, .table tr, .table td {
+                display: block;
+                width: 100%;
+            }
+            
+            .table tr {
+                margin-bottom: 20px;
+                border: 1px solid #e3e6f0;
+                border-radius: 8px;
+                padding: 10px;
+                background: white;
+            }
+            
+            .table td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+                text-align: left;
+            }
+            
+            .table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 15px;
+                width: 45%;
+                padding-right: 10px;
+                font-weight: 600;
+                color: #5a5c69;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+            }
+            
+            .search-filter-container {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .btn-add {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .stats-card {
+                margin-bottom: 15px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Layout Wrapper -->
+    <div id="layout-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <%- include('../partials/sidebar.ejs') %>
+        </div>
+
+        <!-- Navbar -->
+        <div id="navbar-wrapper">
+            <%- include('../partials/navbar.ejs') %>
+        </div>
+
+        <!-- Main Content -->
+        <div id="content-wrapper">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h1><i class="fas fa-film me-2"></i>Movies List</h1>
+                        <p class="text-muted">Manage all movies in your cinema collection</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <a href="/admin/cinemas/create-cinema" class="btn btn-add">
+                            <i class="fas fa-plus me-2"></i>Add New Movie
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Display Success/Error Messages -->
+           
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="stats-value"><%= totalMovies || 0 %></div>
+                        <div class="stats-label">Total Movies</div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="stats-value"><%= promotedMovies || 0 %></div>
+                        <div class="stats-label">Promoted Movies</div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="stats-value"><%= activeMovies || 0 %></div>
+                        <div class="stats-label">Active Movies</div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="stats-value"><%= recentMovies || 0 %></div>
+                        <div class="stats-label">Added This Month</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filter Section -->
+            <!-- <div class="search-filter-container">
+                <form method="GET" action="/movies" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="search" class="form-label">Search Movies</label>
+                        <input type="text" class="form-control" id="search" name="search" 
+                               placeholder="Search by name, genre, or language" value="<%= searchQuery || '' %>">
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label for="genre" class="form-label">Filter by Genre</label>
+                        <select class="form-select" id="genre" name="genre">
+                            <option value="">All Genres</option>
+                            <option value="Action" <%= genreFilter === 'Action' ? 'selected' : '' %>>Action</option>
+                            <option value="Adventure" <%= genreFilter === 'Adventure' ? 'selected' : '' %>>Adventure</option>
+                            <option value="Comedy" <%= genreFilter === 'Comedy' ? 'selected' : '' %>>Comedy</option>
+                            <option value="Drama" <%= genreFilter === 'Drama' ? 'selected' : '' %>>Drama</option>
+                            <option value="Fantasy" <%= genreFilter === 'Fantasy' ? 'selected' : '' %>>Fantasy</option>
+                            <option value="Horror" <%= genreFilter === 'Horror' ? 'selected' : '' %>>Horror</option>
+                            <option value="Romance" <%= genreFilter === 'Romance' ? 'selected' : '' %>>Romance</option>
+                            <option value="Sci-Fi" <%= genreFilter === 'Sci-Fi' ? 'selected' : '' %>>Sci-Fi</option>
+                            <option value="Thriller" <%= genreFilter === 'Thriller' ? 'selected' : '' %>>Thriller</option>
+                            <option value="Animation" <%= genreFilter === 'Animation' ? 'selected' : '' %>>Animation</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label for="status" class="form-label">Filter by Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">All Movies</option>
+                            <option value="promoted" <%= statusFilter === 'promoted' ? 'selected' : '' %>>Promoted Only</option>
+                            <option value="regular" <%= statusFilter === 'regular' ? 'selected' : '' %>>Regular Only</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-2"></i>Filter
+                        </button>
+                    </div>
+                </form>
+            </div> -->
+
+            <!-- Movies Table -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-table me-2"></i>All Movies
+                    <% if (searchQuery || genreFilter || statusFilter) { %>
+                        <span class="badge bg-info ms-2">
+                            Filtered: <%= movies.length %> results
+                        </span>
+                    <% } %>
+                </div>
+                <div class="card-body">
+                    <% if (movies && movies.length > 0) { %>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Poster</th>
+                                        <th>Movie Name</th>
+                                        <th>Genre</th>
+                                        <th>Language</th>
+                                        <th>Duration</th>
+                                        <th>Rating</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% movies.forEach((movie, index) => { %>
+                                        <tr>
+                                            <!-- Poster -->
+                                            <td data-label="Poster">
+                                                <% if (movie.poster) { %>
+                                                    <img src="<%= movie.poster %>" alt="<%= movie.moviename %>" 
+                                                         class="movie-poster" 
+                                                         data-bs-toggle="modal" 
+                                                         data-bs-target="#movieModal<%= movie._id %>">
+                                                <% } else { %>
+                                                    <div class="movie-poster bg-secondary d-flex align-items-center justify-content-center">
+                                                        <i class="fas fa-film text-white"></i>
+                                                    </div>
+                                                <% } %>
+                                            </td>
+                                            
+                                            <!-- Movie Name -->
+                                            <td data-label="Movie Name">
+                                                <strong><%= movie.moviename %></strong>
+                                                <% if (movie.promoted) { %>
+                                                    <span class="badge bg-warning ms-1">Promoted</span>
+                                                <% } %>
+                                                <div class="text-muted small">
+                                                    <i class="fas fa-calendar me-1"></i>
+                                                    <%= new Date(movie.releaseDate).toLocaleDateString() %>
+                                                </div>
+                                            </td>
+                                            
+                                            <!-- Genre -->
+                                            <td data-label="Genre">
+                                                <span class="badge bg-primary"><%= movie.genre %></span>
+                                            </td>
+                                            
+                                            <!-- Language -->
+                                            <td data-label="Language">
+                                                <span class="badge bg-info"><%= movie.language %></span>
+                                            </td>
+                                            
+                                            <!-- Duration -->
+                                            <td data-label="Duration">
+                                                <%= movie.duration %>
+                                            </td>
+                                            
+                                            <!-- Rating -->
+                                            <td data-label="Rating">
+                                                <div class="star-rating">
+                                                    <% const rating = movie.rating || 0; %>
+                                                    <% const maxRating = movie.ratingScale || 5; %>
+                                                    <% for (let i = 1; i <= maxRating; i++) { %>
+                                                        <% if (i <= rating) { %>
+                                                            <i class="fas fa-star"></i>
+                                                        <% } else { %>
+                                                            <i class="far fa-star empty"></i>
+                                                        <% } %>
+                                                    <% } %>
+                                                </div>
+                                                <div class="small text-muted">
+                                                    <%= rating %>/<%= maxRating %> 
+                                                    (<%= movie.votes || 0 %> votes)
+                                                </div>
+                                            </td>
+                                            
+                                            <!-- Status -->
+                                            <td data-label="Status">
+                                                <% if (movie.promoted) { %>
+                                                    <span class="badge bg-warning">
+                                                        <i class="fas fa-star me-1"></i>Promoted
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-check me-1"></i>Active
+                                                    </span>
+                                                <% } %>
+                                                <div class="small text-muted mt-1">
+                                                    <i class="fas fa-heart me-1"></i><%= movie.likes || 0 %> likes
+                                                </div>
+                                            </td>
+                                            
+                                            <!-- Actions -->
+                                            <td data-label="Actions">
+                                                <div class="action-buttons">
+                                                    <!-- View Details Button -->
+                                                    <a href="/movies/<%= movie._id %>" class="btn btn-info btn-sm">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    
+                                                    <!-- Edit Button -->
+                                                    <a href="/movies/edit/<%= movie._id %>" class="btn btn-edit">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    
+                                                    <!-- Promote/Unpromote Button -->
+                                                    <!-- <form method="POST" action="/movies/promote/<%= movie._id %>" style="display: inline;">
+                                                        <input type="hidden" name="_method" value="PUT">
+                                                        <button type="submit" class="btn btn-promote">
+                                                            <% if (movie.promoted) { %>
+                                                                <i class="fas fa-star"></i>
+                                                            <% } else { %>
+                                                                <i class="far fa-star"></i>
+                                                            <% } %>
+                                                        </button>
+                                                    </form> -->
+                                                    
+                                                    <!-- Delete Button -->
+                                                    <form method="POST" action="/movies/delete/<%= movie._id %>" style="display: inline;">
+                                                        <input type="hidden" name="_method" value="DELETE">
+                                                        <button type="submit" class="btn btn-delete" 
+                                                                onclick="return confirm('Are you sure you want to delete this movie?');">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        
+                                        <!-- Movie Details Modal -->
+                                        <div class="modal fade movie-details-modal" id="movieModal<%= movie._id %>" tabindex="-1">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">
+                                                            <i class="fas fa-film me-2"></i><%= movie.moviename %>
+                                                        </h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-md-4 text-center">
+                                                                <% if (movie.poster) { %>
+                                                                    <img src="<%= movie.poster %>" alt="<%= movie.moviename %>" 
+                                                                         class="img-fluid rounded mb-3" style="max-height: 300px;">
+                                                                <% } else { %>
+                                                                    <div class="bg-secondary rounded d-flex align-items-center justify-content-center mb-3" 
+                                                                         style="height: 300px;">
+                                                                        <i class="fas fa-film text-white fa-5x"></i>
+                                                                    </div>
+                                                                <% } %>
+                                                                
+                                                                <div class="mb-3">
+                                                                    <span class="badge bg-primary fs-6"><%= movie.genre %></span>
+                                                                    <span class="badge bg-info fs-6 ms-2"><%= movie.language %></span>
+                                                                    <% if (movie.promoted) { %>
+                                                                        <span class="badge bg-warning fs-6 ms-2">Promoted</span>
+                                                                    <% } %>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="col-md-8">
+                                                                <h4><%= movie.moviename %></h4>
+                                                                
+                                                                <div class="row mb-3">
+                                                                    <div class="col-6">
+                                                                        <strong><i class="fas fa-clock me-2"></i>Duration:</strong>
+                                                                        <p><%= movie.duration %></p>
+                                                                    </div>
+                                                                    <div class="col-6">
+                                                                        <strong><i class="fas fa-calendar me-2"></i>Release Date:</strong>
+                                                                        <p><%= new Date(movie.releaseDate).toLocaleDateString() %></p>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <div class="row mb-3">
+                                                                    <div class="col-6">
+                                                                        <strong><i class="fas fa-star me-2"></i>Rating:</strong>
+                                                                        <p>
+                                                                            <%= movie.rating || 0 %>/<%= movie.ratingScale || 5 %> 
+                                                                            (<%= movie.votes || 0 %> votes)
+                                                                        </p>
+                                                                    </div>
+                                                                    <div class="col-6">
+                                                                        <strong><i class="fas fa-heart me-2"></i>Likes:</strong>
+                                                                        <p><%= movie.likes || 0 %></p>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <div class="mb-3">
+                                                                    <strong><i class="fas fa-users me-2"></i>Cast:</strong>
+                                                                    <p><%= Array.isArray(movie.cast) ? movie.cast.join(', ') : movie.cast %></p>
+                                                                </div>
+                                                                
+                                                                <div class="mb-3">
+                                                                    <strong><i class="fas fa-user-tie me-2"></i>Director:</strong>
+                                                                    <p><%= Array.isArray(movie.director) ? movie.director.join(', ') : movie.director %></p>
+                                                                </div>
+                                                                
+                                                                <div class="mb-3">
+                                                                    <strong><i class="fas fa-align-left me-2"></i>Description:</strong>
+                                                                    <p><%= movie.description %></p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <a href="/movies/edit/<%= movie._id %>" class="btn btn-primary">
+                                                            <i class="fas fa-edit me-2"></i>Edit Movie
+                                                        </a>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                            Close
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <% if (totalPages > 1) { %>
+                            <nav aria-label="Movies pagination">
+                                <ul class="pagination">
+                                    <!-- Previous Page -->
+                                    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                                        <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= searchQuery %>&genre=<%= genreFilter %>&status=<%= statusFilter %>">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                    
+                                    <!-- Page Numbers -->
+                                    <% for (let i = 1; i <= totalPages; i++) { %>
+                                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                            <a class="page-link" href="?page=<%= i %>&search=<%= searchQuery %>&genre=<%= genreFilter %>&status=<%= statusFilter %>">
+                                                <%= i %>
+                                            </a>
+                                        </li>
+                                    <% } %>
+                                    
+                                    <!-- Next Page -->
+                                    <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                        <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= searchQuery %>&genre=<%= genreFilter %>&status=<%= statusFilter %>">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        <% } %>
+                        
+                    <% } else { %>
+                        <!-- Empty State -->
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-film"></i>
+                            </div>
+                            <h4>No Movies Found</h4>
+                            <p class="text-muted mb-4">
+                                <% if (searchQuery || genreFilter || statusFilter) { %>
+                                    Try adjusting your search or filter criteria
+                                <% } else { %>
+                                    You haven't added any movies yet
+                                <% } %>
+                            </p>
+                            <a href="/movies/create" class="btn btn-add">
+                                <i class="fas fa-plus me-2"></i>Add Your First Movie
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

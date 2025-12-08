@@ -1,0 +1,476 @@
+<!-- create_theater.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Theater</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* [Keep all the CSS styles from the previous version] */
+        /* ... (all CSS remains the same) ... */
+
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --sidebar-width: 250px;
+            --collapsed-sidebar-width: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Main Layout Container */
+        #layout-wrapper {
+            display: flex;
+            /* min-height: 100vh; */
+        }
+
+        /* Sidebar Styles - Fixed to left */
+        #sidebar-wrapper {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            transition: all 0.3s;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        #sidebar-wrapper.collapsed {
+            width: var(--collapsed-sidebar-width);
+        }
+
+        /* Navbar Styles - Fixed to top */
+        #navbar-wrapper {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: 56px;
+            z-index: 999;
+            transition: left 0.3s;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2e59d9 100%);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        #navbar-wrapper.expanded {
+            left: var(--collapsed-sidebar-width);
+        }
+
+        /* Main Content Area */
+        #content-wrapper {
+            margin-left: var(--sidebar-width);
+            margin-top: 56px;
+            padding: 20px;
+            min-height: calc(100vh - 56px);
+            transition: margin-left 0.3s;
+            background-color: #f8f9fc;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        #content-wrapper.expanded {
+            margin-left: var(--collapsed-sidebar-width);
+            width: calc(100% - var(--collapsed-sidebar-width));
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            color: #5a5c69;
+            font-weight: 600;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 30px;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #e3e6f0;
+            font-weight: 600;
+            color: #4e73df;
+            padding: 15px 20px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-card .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        /* Table */
+        .table-responsive {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: #f8f9fc;
+            border-bottom: 2px solid #e3e6f0;
+            color: #5a5c69;
+            font-weight: 600;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+
+        /* Buttons */
+        .btn-generate {
+            background: linear-gradient(135deg, var(--success-color) 0%, #17a673 100%);
+            border: none;
+            padding: 10px 25px;
+            font-weight: 600;
+            color: white;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(28, 200, 138, 0.3);
+        }
+
+        /* Badges */
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #17a673 100%);
+        }
+
+        .badge.bg-warning {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #dda20a 100%);
+        }
+
+        .badge.bg-danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #be2617 100%);
+        }
+
+        /* Chart Canvas */
+        canvas {
+            max-width: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                transform: translateX(-100%);
+            }
+
+            #sidebar-wrapper.show {
+                transform: translateX(0);
+            }
+
+            #navbar-wrapper {
+                left: 0;
+            }
+
+            #content-wrapper {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .stat-card {
+                margin-bottom: 15px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Layout Wrapper -->
+    <div id="layout-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <%- include('../partials/sidebar.ejs') %>
+        </div>
+
+        <!-- Navbar -->
+        <div id="navbar-wrapper">
+            <%- include('../partials/navbar.ejs') %>
+        </div>
+
+        <!-- Main Content -->
+        <div id="content-wrapper">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h1><i class="fas fa-theater-masks me-2"></i>Create New Theater</h1>
+                        <p class="text-muted">Add a new theater to your cinema chain</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <a href="/admin/theaters" class="btn btn-cancel me-2">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Display Success/Error Messages -->
+
+            <!-- Theater Creation Form -->
+            <div class="row">
+                <div class="col-12">
+                    <form method="POST" action="/admin/theaters/create">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-building me-2"></i>Theater Information
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Basic Information -->
+                                    <div class="col-lg-8">
+                                        <div class="row mb-4">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="theatername" class="form-label required">Theater
+                                                    Name</label>
+                                                <input type="text" class="form-control" id="theatername"
+                                                    name="theatername" placeholder="Enter theater name" required
+                                                    maxlength="100">
+                                                <div class="form-text">Enter the official name of the theater</div>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label for="screens" class="form-label required">Number of
+                                                    Screens</label>
+                                                <input class="form-control" id="screens" name="screens" required>
+
+                                                <div class="form-text">Select the total number of screens in this
+                                                    theater</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Contact Information -->
+                                        <div class="row mb-4">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="contact" class="form-label required">Contact Number</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-phone"></i>
+                                                    </span>
+                                                    <input type="tel" class="form-control" id="contact" name="contact"
+                                                        placeholder="Enter contact number" required pattern="[0-9]{10}"
+                                                        maxlength="10">
+                                                </div>
+                                                <div class="form-text">Enter 10-digit mobile number</div>
+                                            </div>
+
+                                        </div>
+
+                                        <!-- Location Information -->
+                                        <div class="row mb-4">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="district" class="form-label required">District</label>
+                                                <input class="form-control" id="district" name="district" required>
+
+                                                <div class="form-text">Select the district where theater is located
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label for="state" class="form-label required">State</label>
+                                                <input class="form-control" id="state" name="state" required>
+
+                                                <div class="form-text">Select the state where theater is located</div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Assigned Movies & Theater Features -->
+                                    <div class="col-lg-4">
+                                        <!-- Assigned Movies -->
+                                        <div class="card mb-4">
+                                            <div class="card-header">
+                                                <i class="fas fa-film me-2"></i>Assign Movies
+                                            </div>
+                                            <div class="card-body">
+                                                <label class="form-label">Select Movies to Assign</label>
+
+                                                <div class="movie-checkbox-list"
+                                                    style="max-height: 250px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                                                    <% if (movies && movies.length> 0) { %>
+                                                        <% movies.forEach(movie=> { %>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input movie-check"
+                                                                    type="checkbox" name="assignedMovies"
+                                                                    value="<%= movie._id %>"
+                                                                    id="movie_<%= movie._id %>">
+                                                                <label class="form-check-label"
+                                                                    for="movie_<%= movie._id %>">
+                                                                    <%= movie.moviename %>
+                                                                </label>
+                                                            </div>
+                                                            <% }) %>
+                                                                <% } else { %>
+                                                                    <p>No movies available</p>
+                                                                    <% } %>
+                                                </div>
+
+                                                <p id="movieCount" class="mt-2 text-primary fw-bold">Selected: 0 movies
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Form Actions -->
+                                    <div class="row mt-4">
+                                        <div class="col-12 text-end">
+                                            <button type="reset" class="btn btn-cancel me-3">
+                                                <i class="fas fa-redo me-2"></i>Reset Form
+                                            </button>
+                                            <button type="submit" class="btn btn-submit">
+                                                <i class="fas fa-save me-2"></i>Create Theater
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Simple form validation
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    const theatername = document.getElementById('theatername').value.trim();
+                    const contact = document.getElementById('contact').value.trim();
+
+                    if (!theatername) {
+                        alert('Theater name is required');
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (!/^\d{10}$/.test(contact)) {
+                        alert('Please enter a valid 10-digit contact number');
+                        e.preventDefault();
+                        return;
+                    }
+                });
+            }
+
+            const movieCheckboxes = document.querySelectorAll('.movie-check');
+            const movieCount = document.getElementById('movieCount');
+
+            movieCheckboxes.forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const count = document.querySelectorAll('.movie-check:checked').length;
+                    movieCount.innerText = `Selected: ${count} movies`;
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,558 @@
+<!-- footer.ejs -->
+<footer class="footer">
+    <div class="container-fluid">
+        <!-- Main Footer Content -->
+        <div class="row align-items-center footer-main">
+            <div class="col-lg-4 col-md-6">
+                <!-- Company Info -->
+                <div class="footer-brand">
+                    <i class="fas fa-film me-2"></i>
+                    <span class="brand-text">BookMyCinema</span>
+                </div>
+                <div class="footer-description mt-2">
+                    <p class="mb-1">Professional cinema management system for modern theaters</p>
+                    <div class="system-status mt-3">
+                        <span class="status-indicator online" title="System Online"></span>
+                        <small>System Status: <strong>Operational</strong></small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <!-- Quick Links -->
+                <div class="quick-links">
+                    <h6 class="footer-section-title">Quick Links</h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <ul class="footer-links-list">
+                                <li><a href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                                <li><a href="/bookings/show_details"><i class="fas fa-ticket-alt"></i> Bookings</a></li>
+                                <li><a href="/cinemas/create_cinema"><i class="fas fa-plus-circle"></i> Add Cinema</a></li>
+                                <li><a href="/view/movies"><i class="fas fa-film"></i> Movies</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <ul class="footer-links-list">
+                                <li><a href="/tables/booking_details"><i class="fas fa-table"></i> Reports</a></li>
+                                <li><a href="/help"><i class="fas fa-question-circle"></i> Help</a></li>
+                                <li><a href="/contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                                <li><a href="/settings"><i class="fas fa-cogs"></i> Settings</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-12">
+                <!-- Contact & Social -->
+                <div class="contact-info">
+                    <h6 class="footer-section-title">Contact Support</h6>
+                    <div class="contact-items">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>support@cinemaadmin.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+1 (555) 123-4567</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <span>24/7 Support Available</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Links -->
+                    <div class="social-links mt-3">
+                        <h6 class="footer-section-title">Follow Us</h6>
+                        <div class="social-icons">
+                            <a href="#" class="social-icon facebook" title="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-icon twitter" title="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-icon instagram" title="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="social-icon linkedin" title="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="#" class="social-icon youtube" title="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Copyright & Legal -->
+        <div class="row footer-bottom">
+            <div class="col-md-6">
+                <div class="copyright">
+                    <i class="fas fa-copyright"></i>
+                    <span id="currentYear"><%= new Date().getFullYear() %></span>
+                    BookMyCinema Management System. All rights reserved.
+                    <span class="version-badge">v2.0.1</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="legal-links text-end">
+                    <a href="/privacy" class="legal-link">
+                        <i class="fas fa-shield-alt"></i> Privacy Policy
+                    </a>
+                    <span class="separator">|</span>
+                    <a href="/terms" class="legal-link">
+                        <i class="fas fa-file-contract"></i> Terms of Service
+                    </a>
+                    <span class="separator">|</span>
+                    <a href="/sitemap" class="legal-link">
+                        <i class="fas fa-sitemap"></i> Sitemap
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- System Statistics (Optional) -->
+        <div class="row system-stats mt-3">
+            <div class="col-12">
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <i class="fas fa-database"></i>
+                        <span>Database: <strong class="text-success">Online</strong></span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-server"></i>
+                        <span>Uptime: <strong>99.8%</strong></span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>Active Users: <strong id="activeUsersCount">156</strong></span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>Today's Bookings: <strong>342</strong></span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-film"></i>
+                        <span>Active Movies: <strong>15</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+    /* Footer Base Styles */
+    .footer {
+        background: linear-gradient(180deg, #2a3042 0%, #1a1e2c 100%);
+        color: #a8b5d1;
+        padding: 40px 0 20px;
+        margin-top: 50px;
+        border-top: 3px solid #4e73df;
+        position: relative;
+        font-size: 0.9rem;
+    }
+    
+    .footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #4e73df, transparent);
+    }
+    
+    /* Footer Brand */
+    .footer-brand {
+        display: flex;
+        align-items: center;
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    
+    .footer-brand i {
+        color: #4e73df;
+        font-size: 1.5rem;
+    }
+    
+    .footer-description p {
+        color: #8a9bba;
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+    
+    /* System Status */
+    .system-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+    }
+    
+    .status-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+    
+    .status-indicator.online {
+        background: #1cc88a;
+        box-shadow: 0 0 8px #1cc88a;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+    
+    /* Section Titles */
+    .footer-section-title {
+        color: white;
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: relative;
+        padding-bottom: 8px;
+    }
+    
+    .footer-section-title::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 30px;
+        height: 2px;
+        background: #4e73df;
+    }
+    
+    /* Quick Links */
+    .footer-links-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .footer-links-list li {
+        margin-bottom: 8px;
+    }
+    
+    .footer-links-list a {
+        color: #a8b5d1;
+        text-decoration: none;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+    }
+    
+    .footer-links-list a:hover {
+        color: #4e73df;
+        transform: translateX(5px);
+    }
+    
+    .footer-links-list i {
+        width: 16px;
+        text-align: center;
+        font-size: 0.8rem;
+    }
+    
+    /* Contact Info */
+    .contact-items {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.85rem;
+    }
+    
+    .contact-item i {
+        color: #4e73df;
+        width: 16px;
+        text-align: center;
+    }
+    
+    /* Social Links */
+    .social-icons {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+    }
+    
+    .social-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+    }
+    
+    .social-icon:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .social-icon.facebook { background: #3b5998; }
+    .social-icon.twitter { background: #1da1f2; }
+    .social-icon.instagram { background: #e4405f; }
+    .social-icon.linkedin { background: #0077b5; }
+    .social-icon.youtube { background: #ff0000; }
+    
+    /* Footer Bottom */
+    .footer-bottom {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #2d3449;
+    }
+    
+    .copyright {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.85rem;
+        color: #8a9bba;
+    }
+    
+    .copyright i {
+        color: #4e73df;
+    }
+    
+    .version-badge {
+        background: rgba(78, 115, 223, 0.2);
+        color: #4e73df;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 10px;
+        border: 1px solid rgba(78, 115, 223, 0.3);
+    }
+    
+    /* Legal Links */
+    .legal-links {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .legal-link {
+        color: #a8b5d1;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: color 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .legal-link:hover {
+        color: #4e73df;
+    }
+    
+    .legal-link i {
+        font-size: 0.8rem;
+    }
+    
+    .separator {
+        color: #4a5568;
+        font-size: 0.85rem;
+    }
+    
+    /* System Statistics */
+    .system-stats {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 20px;
+    }
+    
+    .stats-container {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.85rem;
+        color: #8a9bba;
+    }
+    
+    .stat-item i {
+        color: #4e73df;
+        font-size: 0.9rem;
+    }
+    
+    .stat-item strong {
+        color: white;
+        font-weight: 600;
+        margin-left: 5px;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .footer-main > div {
+            margin-bottom: 30px;
+        }
+        
+        .footer-section-title::after {
+            width: 25px;
+        }
+        
+        .social-icons {
+            justify-content: flex-start;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .footer {
+            padding: 30px 0 15px;
+        }
+        
+        .footer-brand {
+            font-size: 1.1rem;
+        }
+        
+        .legal-links {
+            justify-content: flex-start;
+            margin-top: 15px;
+        }
+        
+        .stats-container {
+            justify-content: flex-start;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            min-width: 180px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .quick-links .row > div {
+            margin-bottom: 15px;
+        }
+        
+        .footer-section-title {
+            font-size: 0.9rem;
+        }
+        
+        .social-icons {
+            justify-content: center;
+        }
+        
+        .legal-links {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .separator {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+    // Update active users count with animation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Update current year
+        const currentYear = new Date().getFullYear();
+        document.getElementById('currentYear').textContent = currentYear;
+        
+        // Animate active users count
+        const activeUsersElement = document.getElementById('activeUsersCount');
+        if (activeUsersElement) {
+            let currentUsers = parseInt(activeUsersElement.textContent) || 156;
+            
+            // Simulate user count changes every 30 seconds
+            setInterval(() => {
+                const change = Math.floor(Math.random() * 10) - 3; // -3 to +6 change
+                currentUsers = Math.max(120, currentUsers + change);
+                
+                // Animate the count change
+                animateCountChange(activeUsersElement, currentUsers);
+            }, 30000);
+        }
+        
+        // Add hover effect to quick links
+        const quickLinks = document.querySelectorAll('.footer-links-list a');
+        quickLinks.forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(5px)';
+            });
+            
+            link.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+        
+        // System stats animation
+        const statItems = document.querySelectorAll('.stat-item');
+        statItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                item.style.transition = 'all 0.5s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+    
+    // Function to animate number changes
+    function animateCountChange(element, targetValue) {
+        const currentValue = parseInt(element.textContent) || 0;
+        const duration = 1000; // 1 second
+        const step = 20; // update every 20ms
+        const increment = (targetValue - currentValue) / (duration / step);
+        let current = currentValue;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            
+            if ((increment > 0 && current >= targetValue) || 
+                (increment < 0 && current <= targetValue)) {
+                current = targetValue;
+                clearInterval(timer);
+            }
+            
+            element.textContent = Math.round(current);
+        }, step);
+    }
+    
+    // Add click handler for version badge
+    const versionBadge = document.querySelector('.version-badge');
+    if (versionBadge) {
+        versionBadge.addEventListener('click', function() {
+            alert('SB Admin 2 Cinema Management System\nVersion: 2.0.1\nBuild Date: <%= new Date().toLocaleDateString() %>');
+        });
+    }
+</script>

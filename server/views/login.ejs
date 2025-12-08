@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Responsive System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Same CSS styles as before, but I'll add a loading spinner style */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Rest of the CSS remains the same */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 450px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .card-header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #444;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 18px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 15px 15px 50px;
+            border: 1.5px solid #e1e5eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: #f9fafc;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4b6cb7;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+
+        .remember-me input {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+            accent-color: #4b6cb7;
+        }
+
+        .forgot-password {
+            color: #4b6cb7;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .forgot-password:hover {
+            color: #182848;
+            text-decoration: underline;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(135deg, #3a5ca9 0%, #121f3d 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(75, 108, 183, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            text-align: center;
+            position: relative;
+            margin: 25px 0;
+            color: #777;
+        }
+
+        .divider::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: #e1e5eb;
+        }
+
+        .divider span {
+            background-color: white;
+            padding: 0 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .social-login {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 1.5px solid #e1e5eb;
+            background-color: white;
+            color: #555;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .social-btn.google:hover {
+            color: #db4437;
+            border-color: #db4437;
+        }
+
+        .social-btn.facebook:hover {
+            color: #4267B2;
+            border-color: #4267B2;
+        }
+
+        .social-btn.twitter:hover {
+            color: #1DA1F2;
+            border-color: #1DA1F2;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #555;
+        }
+
+        .register-link a {
+            color: #4b6cb7;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .login-card {
+                max-width: 90%;
+            }
+
+            .card-header {
+                padding: 25px 20px;
+            }
+
+            .card-body {
+                padding: 25px;
+            }
+
+            .remember-forgot {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .forgot-password {
+                margin-top: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .login-card {
+                max-width: 100%;
+            }
+
+            .card-header h1 {
+                font-size: 24px;
+            }
+
+            .card-body {
+                padding: 20px;
+            }
+
+            .btn-login {
+                padding: 14px;
+            }
+
+            .social-login {
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .social-login {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .social-btn {
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        /* Animation for form */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-card {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Error message styling */
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 15px;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .success-message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 15px;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="login-card">
+            <div class="card-header">
+                <h1>Welcome Back</h1>
+                <p>Sign in to your account to continue</p>
+            </div>
+
+            <div class="card-body">
+                <!-- Display flash messages if any -->
+                <!-- This will work because flash messages are in res.locals -->
+                <!-- <% if (locals.success && locals.success.length> 0) { %>
+                    <div class="success-message show">
+                        <i class="fas fa-check-circle"></i>
+                        <%= locals.success[0] %>
+                    </div>
+                    <% } %>
+
+                        <% if (locals.error && locals.error.length> 0) { %>
+                            <div class="error-message show">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <%= locals.error[0] %>
+                            </div>
+                            <% } %> -->
+
+                                <form id="loginForm" action="/admin/login" method="POST">
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-envelope"></i>
+                                            <input type="email" id="email" name="email" class="form-control"
+                                                placeholder="Enter your email"
+                                                required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="password">Password</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-lock"></i>
+                                            <input type="password" id="password" name="password" class="form-control"
+                                                placeholder="Enter your password" required>
+                                            <button type="button" class="password-toggle" id="passwordToggle">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="remember-forgot">
+                                        <div class="remember-me">
+                                            <input type="checkbox" id="rememberMe" name="rememberMe">
+                                            <label for="rememberMe">Remember me</label>
+                                        </div>
+                                        <a href="/forgot-password" class="forgot-password">Forgot password?</a>
+                                    </div> -->
+
+                                    <button type="submit" class="btn-login" id="loginButton">
+                                        <i class="fas fa-sign-in-alt"></i> Sign In
+                                    </button>
+
+                                    <div class="divider">
+                                        <span>Or sign in with</span>
+                                    </div>
+
+                                    <div class="social-login">
+                                        <div class="social-btn google">
+                                            <i class="fab fa-google"></i>
+                                        </div>
+                                        <div class="social-btn facebook">
+                                            <i class="fab fa-facebook-f"></i>
+                                        </div>
+                                        <div class="social-btn twitter">
+                                            <i class="fab fa-twitter"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="register-link">
+                                        Don't have an account? <a href="/register">Create an account</a>
+                                    </div>
+                                </form>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2023 Responsive Login System. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        // Password visibility toggle
+        document.getElementById('passwordToggle').addEventListener('click', function () {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            const loginButton = document.getElementById('loginButton');
+            const originalText = loginButton.innerHTML;
+
+            // Show loading state
+            loginButton.innerHTML = '<div class="spinner"></div> Signing In...';
+            loginButton.disabled = true;
+
+            // The form will submit normally to /signin
+            // This just provides visual feedback
+        });
+
+        // Social login buttons
+        document.querySelectorAll('.social-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const platform = this.classList.contains('google') ? 'Google' :
+                    this.classList.contains('facebook') ? 'Facebook' : 'Twitter';
+                alert(`Sign in with ${platform} would be implemented in a real application.`);
+            });
+        });
+
+        // Auto-hide messages when user starts typing
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        if (emailInput) {
+            emailInput.addEventListener('input', function () {
+                document.querySelector('.error-message')?.classList.remove('show');
+                document.querySelector('.success-message')?.classList.remove('show');
+            });
+        }
+
+        if (passwordInput) {
+            passwordInput.addEventListener('input', function () {
+                document.querySelector('.error-message')?.classList.remove('show');
+                document.querySelector('.success-message')?.classList.remove('show');
+            });
+        }
+    </script>
+</body>
+
+</html>

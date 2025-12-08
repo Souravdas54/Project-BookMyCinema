@@ -1,0 +1,932 @@
+<style>
+    /* Sidebar Base Styles */
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+        color: white;
+        position: fixed;
+        left: 0;
+        top: 0;
+        transition: all 0.3s ease;
+        z-index: 1030;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    }
+
+    .sidebar.collapsed {
+        width: 70px;
+    }
+
+    /* Sidebar Header */
+    .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        flex-shrink: 0;
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-brand {
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .sidebar-brand i {
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+
+    .sidebar.collapsed .sidebar-brand span {
+        display: none;
+    }
+
+    /* Sidebar Menu Container */
+    .sidebar-menu {
+        padding: 20px 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex-grow: 1;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    }
+
+    .sidebar-menu::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sidebar-menu::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-menu::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 3px;
+    }
+
+    .sidebar-menu::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Sidebar Items */
+    .sidebar-item {
+        margin-bottom: 3px;
+        position: relative;
+    }
+
+    .sidebar-link {
+        color: rgba(255, 255, 255, 0.8);
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        transition: all 0.3s;
+        white-space: nowrap;
+        position: relative;
+        border-left: 3px solid transparent;
+    }
+
+    .sidebar-link:hover,
+    .sidebar-link.active {
+        color: white;
+        background: rgba(255, 255, 255, 0.1);
+        border-left-color: white;
+    }
+
+    .sidebar-link i {
+        margin-right: 12px;
+        width: 20px;
+        text-align: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .sidebar-link .chevron-icon {
+        margin-left: auto;
+        margin-right: 0;
+        font-size: 0.8rem;
+        transition: transform 0.3s;
+    }
+
+    .sidebar-link[aria-expanded="true"] .chevron-icon {
+        transform: rotate(180deg);
+    }
+
+    .sidebar.collapsed .sidebar-link span,
+    .sidebar.collapsed .sidebar-link .chevron-icon {
+        display: none;
+    }
+
+    .sidebar.collapsed .sidebar-link {
+        justify-content: center;
+        padding: 12px 0;
+    }
+
+    .sidebar.collapsed .sidebar-link i {
+        margin-right: 0;
+        font-size: 1.2rem;
+    }
+
+    /* Tooltip for collapsed state */
+    .sidebar.collapsed .sidebar-link {
+        position: relative;
+    }
+
+    .sidebar.collapsed .sidebar-link::after {
+        content: attr(data-title);
+        position: absolute;
+        left: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s;
+        z-index: 1050;
+        margin-left: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar.collapsed .sidebar-link:hover::after {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Submenu Styles */
+    .sidebar-submenu {
+        background: rgba(0, 0, 0, 0.15);
+        padding: 8px 0;
+        animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .submenu-link {
+        color: rgba(255, 255, 255, 0.7);
+        padding: 8px 20px 8px 50px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        white-space: nowrap;
+        position: relative;
+        border-left: 3px solid transparent;
+    }
+
+    .submenu-link:hover,
+    .submenu-link.active {
+        color: white;
+        background: rgba(255, 255, 255, 0.1);
+        border-left-color: #1cc88a;
+    }
+
+    .submenu-link i {
+        margin-right: 10px;
+        width: 16px;
+        text-align: center;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .sidebar.collapsed .submenu-link {
+        padding-left: 20px;
+        justify-content: center;
+    }
+
+    .sidebar.collapsed .submenu-link i {
+        margin-right: 0;
+        font-size: 1rem;
+    }
+
+    .sidebar.collapsed .submenu-link span {
+        display: none;
+    }
+
+    /* Sidebar Footer */
+    .sidebar-footer {
+        padding: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        flex-shrink: 0;
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .system-status {
+        display: flex;
+        align-items: center;
+        font-size: 0.85rem;
+        gap: 8px;
+    }
+
+    .status-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #1cc88a;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .status-indicator.online::before {
+        content: '';
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        border-radius: 50%;
+        background: #1cc88a;
+        opacity: 0.4;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(0.8);
+            opacity: 0.4;
+        }
+
+        50% {
+            transform: scale(1.2);
+            opacity: 0.2;
+        }
+
+        100% {
+            transform: scale(0.8);
+            opacity: 0.4;
+        }
+    }
+
+    .sidebar.collapsed .system-status span:not(.status-indicator) {
+        display: none;
+    }
+
+    .sidebar.collapsed .system-status {
+        justify-content: center;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .sidebar {
+            transform: translateX(-100%);
+            width: 280px;
+        }
+
+        .sidebar.show {
+            transform: translateX(0);
+        }
+
+        .sidebar.collapsed {
+            width: 280px;
+        }
+
+        .sidebar.collapsed .sidebar-link span,
+        .sidebar.collapsed .sidebar-link .chevron-icon,
+        .sidebar.collapsed .submenu-link span,
+        .sidebar.collapsed .system-status span:not(.status-indicator) {
+            display: inline;
+        }
+
+        .sidebar.collapsed .sidebar-link {
+            justify-content: flex-start;
+            padding: 12px 20px;
+        }
+
+        .sidebar.collapsed .sidebar-link i {
+            margin-right: 12px;
+            font-size: 1rem;
+        }
+
+        .sidebar.collapsed .submenu-link {
+            justify-content: flex-start;
+            padding-left: 50px;
+        }
+
+        .sidebar.collapsed .submenu-link i {
+            margin-right: 10px;
+        }
+
+        .sidebar.collapsed .system-status {
+            justify-content: flex-start;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1029;
+            display: none;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .sidebar {
+            width: 100%;
+            max-width: 280px;
+        }
+    }
+
+    /* Active menu indicator */
+    .sidebar-item.active>.sidebar-link {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border-left-color: white;
+        font-weight: 500;
+    }
+</style>
+
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h5 class="sidebar-brand">
+            <i class="fas fa-film"></i>
+            <span>BookMyCinema</span>
+        </h5>
+    </div>
+
+    <div class="sidebar-menu" id="sidebarMenu">
+        <!-- Dashboard -->
+        <div class="sidebar-item active">
+            <a href="/admin/dashboard" class="sidebar-link active" data-title="Dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+
+        <!-- Bookings Cinema -->
+        <!-- <div class="sidebar-item">
+            <a href="#bookingsMenu" class="sidebar-link" data-bs-toggle="collapse" data-title="Bookings Cinema"
+                aria-expanded="true">
+                <i class="fas fa-ticket-alt"></i>
+                <span>Bookings Cinema</span>
+                <i class="fas fa-chevron-down chevron-icon"></i>
+            </a>
+            <div class="collapse show" id="bookingsMenu" data-parent="#sidebarMenu">
+                <div class="sidebar-submenu">
+                    <a href="/bookings/show_details" class="submenu-link" data-title="Show Details">
+                        <i class="fas fa-eye"></i>
+                        <span>Booking Details</span>
+                    </a>
+                    <a href="/bookings/payment" class="submenu-link" data-title="Payment">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Payment</span>
+                    </a>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Cinemas -->
+        <div class="sidebar-item">
+            <a href="#cinemasMenu" class="sidebar-link" data-bs-toggle="collapse" data-title="Cinemas"
+                aria-expanded="false">
+                <i class="fas fa-video"></i>
+                <span>Cinemas</span>
+                <i class="fas fa-chevron-down chevron-icon"></i>
+            </a>
+            <div class="collapse" id="cinemasMenu" data-parent="#sidebarMenu">
+                <div class="sidebar-submenu">
+                    <a href="/admin/cinemas/create-cinema" class="submenu-link" data-title="Create Cinema">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Create Cinema</span>
+                    </a>
+                    <a href="/admin/cinemas/create-theater" class="submenu-link" data-title="Create Theater">
+                        <i class="fas fa-theater-masks"></i>
+                        <span>Create Theater</span>
+                    </a>
+                    <a href="/admin/cinemas/create-show" class="submenu-link" data-title="Create Shows">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Create Shows</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Details -->
+        <div class="sidebar-item">
+            <a href="#viewDetailsMenu" class="sidebar-link" data-bs-toggle="collapse" data-title="View Details"
+                aria-expanded="false">
+                <i class="fas fa-info-circle"></i>
+                <span>View Details</span>
+                <i class="fas fa-chevron-down chevron-icon"></i>
+            </a>
+            <div class="collapse" id="viewDetailsMenu" data-parent="#sidebarMenu">
+                <div class="sidebar-submenu">
+                    <a href="/admin/movies/list" class="submenu-link" data-title="Movies Details">
+                        <i class="fas fa-film"></i>
+                        <span>Movies Details</span>
+                    </a>
+                    <a href="/admin/theather/list" class="submenu-link" data-title="Theater Details">
+                        <i class="fas fa-building"></i>
+                        <span>Theater Details</span>
+                    </a>
+                    <a href="/admin/show/details" class="submenu-link" data-title="Show Details">
+                        <i class="fas fa-clock"></i>
+                        <span>Show Details</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tables -->
+        <!-- <div class="sidebar-item">
+            <a href="/tables/booking_details" class="sidebar-link" data-title="Booking Details">
+                <i class="fas fa-table"></i>
+                <span>Booking Details</span>
+            </a>
+        </div> -->
+
+        <!-- Addons -->
+        <!-- <div class="sidebar-item">
+            <a href="/addons" class="sidebar-link" data-title="Addons">
+                <i class="fas fa-puzzle-piece"></i>
+                <span>Addons</span>
+            </a>
+        </div> -->
+
+        <!-- Charts -->
+        <div class="sidebar-item">
+            <a href="/admin/chat" class="sidebar-link" data-title="Charts">
+                <i class="fas fa-chart-bar"></i>
+                <span>Chat</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="system-status">
+            <span class="status-indicator online"></span>
+            <span>System Online</span>
+        </div>
+    </div>
+</div>
+
+<!-- Sidebar JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarWrapper = document.getElementById('sidebar-wrapper');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const navbarWrapper = document.getElementById('navbar-wrapper');
+        const contentWrapper = document.getElementById('content-wrapper');
+
+        // Initialize Bootstrap Collapse for sidebar menus
+        const collapseElements = document.querySelectorAll('.collapse');
+        collapseElements.forEach(collapse => {
+            if (!collapse.hasAttribute('data-bs-collapse-initialized')) {
+                new bootstrap.Collapse(collapse, {
+                    toggle: false
+                });
+                collapse.setAttribute('data-bs-collapse-initialized', 'true');
+            }
+        });
+
+        // Sidebar toggle functionality - COMPLETE VERSION
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // Check if mobile (screen width <= 992px)
+                if (window.innerWidth <= 992) {
+                    // MOBILE BEHAVIOR
+                    if (sidebarWrapper) {
+                        sidebarWrapper.classList.toggle('show');
+                    }
+                    
+                    if (sidebarOverlay) {
+                        sidebarOverlay.classList.toggle('show');
+                    }
+                    
+                    // Toggle body overflow
+                    document.body.style.overflow = (sidebarWrapper && sidebarWrapper.classList.contains('show')) ? 'hidden' : '';
+                    
+                    // Update toggle icon for mobile
+                    const icon = this.querySelector('i');
+                    if (sidebarWrapper && sidebarWrapper.classList.contains('show')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                } else {
+                    // DESKTOP BEHAVIOR
+                    if (sidebarWrapper) {
+                        sidebarWrapper.classList.toggle('collapsed');
+                    }
+                    
+                    if (navbarWrapper) {
+                        navbarWrapper.classList.toggle('expanded');
+                    }
+                    
+                    if (contentWrapper) {
+                        contentWrapper.classList.toggle('expanded');
+                    }
+                    
+                    // Update toggle icon for desktop
+                    const icon = this.querySelector('i');
+                    if (sidebarWrapper && sidebarWrapper.classList.contains('collapsed')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                    
+                    // Save state to localStorage
+                    localStorage.setItem('sidebarCollapsed', sidebarWrapper.classList.contains('collapsed'));
+                }
+            });
+        }
+
+        // Close sidebar on overlay click (mobile)
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', function () {
+                if (sidebarWrapper) {
+                    sidebarWrapper.classList.remove('show');
+                }
+                this.classList.remove('show');
+                document.body.style.overflow = '';
+                
+                // Reset toggle icon
+                if (sidebarToggle) {
+                    const icon = sidebarToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        }
+
+        // Load saved sidebar state on page load (desktop only)
+        function loadSidebarState() {
+            if (window.innerWidth > 992) {
+                const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+                
+                if (sidebarWrapper && isCollapsed && !sidebarWrapper.classList.contains('collapsed')) {
+                    sidebarWrapper.classList.add('collapsed');
+                    
+                    if (navbarWrapper) {
+                        navbarWrapper.classList.add('expanded');
+                    }
+                    
+                    if (contentWrapper) {
+                        contentWrapper.classList.add('expanded');
+                    }
+                    
+                    // Update toggle icon
+                    if (sidebarToggle) {
+                        const icon = sidebarToggle.querySelector('i');
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    }
+                }
+            }
+        }
+
+        // Run on page load
+        loadSidebarState();
+
+        // Handle window resize
+        let resizeTimer;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function () {
+                // On large screens, ensure sidebar is visible and reset mobile state
+                if (window.innerWidth > 992) {
+                    if (sidebarWrapper) {
+                        sidebarWrapper.classList.remove('show');
+                        sidebarWrapper.style.transform = '';
+                    }
+                    
+                    if (sidebarOverlay) {
+                        sidebarOverlay.classList.remove('show');
+                    }
+                    
+                    document.body.style.overflow = '';
+                    
+                    // Update toggle icon
+                    if (sidebarToggle) {
+                        const icon = sidebarToggle.querySelector('i');
+                        if (sidebarWrapper && sidebarWrapper.classList.contains('collapsed')) {
+                            icon.classList.remove('fa-bars');
+                            icon.classList.add('fa-times');
+                        } else {
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    }
+                    
+                    // Reload sidebar state
+                    loadSidebarState();
+                }
+            }, 250);
+        });
+
+        // Handle active menu items
+        const currentPath = window.location.pathname;
+        const menuLinks = document.querySelectorAll('.sidebar-link, .submenu-link');
+
+        menuLinks.forEach(link => {
+            link.classList.remove('active');
+
+            // Check if current path matches link href
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+
+                // If it's a submenu link, expand its parent
+                const parentCollapse = link.closest('.collapse');
+                if (parentCollapse) {
+                    const collapseInstance = bootstrap.Collapse.getInstance(parentCollapse);
+                    if (collapseInstance) {
+                        collapseInstance.show();
+                    }
+
+                    // Also activate the parent menu item
+                    const parentLink = parentCollapse.previousElementSibling;
+                    if (parentLink && parentLink.classList.contains('sidebar-link')) {
+                        parentLink.classList.add('active');
+                        parentLink.setAttribute('aria-expanded', 'true');
+                    }
+                }
+            }
+        });
+
+        // Add data-title attributes for tooltips
+        const menuItems = document.querySelectorAll('.sidebar-link, .submenu-link');
+        menuItems.forEach(item => {
+            const text = item.querySelector('span');
+            if (text && !item.getAttribute('data-title')) {
+                item.setAttribute('data-title', text.textContent.trim());
+            }
+        });
+    });
+</script>
+
+<!-- Sidebar JavaScript -->
+<!-- <script>
+     document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        // Initialize Bootstrap Collapse for sidebar menus
+        const collapseElements = document.querySelectorAll('.collapse');
+        collapseElements.forEach(collapse => {
+            // Only initialize if not already initialized
+            if (!collapse.hasAttribute('data-bs-collapse-initialized')) {
+                new bootstrap.Collapse(collapse, {
+                    toggle: false
+                });
+                collapse.setAttribute('data-bs-collapse-initialized', 'true');
+            }
+        });
+
+        // Sidebar toggle functionality for mobile
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // Toggle the sidebar visibility on mobile
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.toggle('show');
+                    if (sidebarOverlay) {
+                        sidebarOverlay.classList.toggle('show');
+                    }
+                    document.body.style.overflow = sidebar.classList.contains('show') ? 'hidden' : '';
+                    
+                    // Update toggle icon
+                    const icon = this.querySelector('i');
+                    if (sidebar.classList.contains('show')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                } 
+                // Desktop sidebar collapse/expand
+                else {
+                    sidebar.classList.toggle('collapsed');
+                    
+                    // Update toggle icon
+                    const icon = this.querySelector('i');
+                    if (sidebar.classList.contains('collapsed')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                        
+                        // Adjust content margin for collapsed state
+                        adjustContentMargin(70);
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                        
+                        // Adjust content margin for expanded state
+                        adjustContentMargin(250);
+                    }
+                }
+            });
+        }
+
+        // Close sidebar on overlay click (mobile)
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', function () {
+                sidebar.classList.remove('show');
+                this.classList.remove('show');
+                document.body.style.overflow = '';
+                
+                // Reset toggle icon
+                if (sidebarToggle) {
+                    const icon = sidebarToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function (event) {
+            const isClickInsideSidebar = sidebar && sidebar.contains(event.target);
+            const isClickOnToggle = sidebarToggle && sidebarToggle.contains(event.target);
+
+            if (window.innerWidth <= 992 &&
+                !isClickInsideSidebar &&
+                !isClickOnToggle &&
+                sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+                if (sidebarOverlay) {
+                    sidebarOverlay.classList.remove('show');
+                }
+                document.body.style.overflow = '';
+                
+                // Reset toggle icon
+                if (sidebarToggle) {
+                    const icon = sidebarToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
+
+        // Close sidebar on escape key press
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+                if (sidebarOverlay) {
+                    sidebarOverlay.classList.remove('show');
+                }
+                document.body.style.overflow = '';
+                
+                // Reset toggle icon
+                if (sidebarToggle) {
+                    const icon = sidebarToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
+
+        // Function to adjust main content margin
+        function adjustContentMargin(width) {
+            const contentWrapper = document.getElementById('content-wrapper');
+            if (contentWrapper) {
+                contentWrapper.style.marginLeft = width + 'px';
+                contentWrapper.style.transition = 'margin-left 0.3s ease';
+            }
+        }
+
+        // Initialize content margin on page load
+        function initializeContentMargin() {
+            const sidebar = document.getElementById('sidebar');
+            const contentWrapper = document.getElementById('content-wrapper');
+            
+            if (sidebar && contentWrapper) {
+                if (window.innerWidth <= 992) {
+                    // On mobile, sidebar is hidden by default
+                    contentWrapper.style.marginLeft = '0';
+                } else if (sidebar.classList.contains('collapsed')) {
+                    contentWrapper.style.marginLeft = '70px';
+                } else {
+                    contentWrapper.style.marginLeft = '250px';
+                }
+                contentWrapper.style.transition = 'margin-left 0.3s ease';
+            }
+        }
+
+        // Run initialization on page load
+        initializeContentMargin();
+
+        // Handle window resize
+        let resizeTimer;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function () {
+                initializeContentMargin();
+                
+                // On large screens, ensure sidebar is visible and mobile overlay is hidden
+                if (window.innerWidth > 992) {
+                    sidebar.classList.remove('show');
+                    if (sidebarOverlay) {
+                        sidebarOverlay.classList.remove('show');
+                    }
+                    document.body.style.overflow = '';
+                    
+                    // Reset toggle icon
+                    if (sidebarToggle) {
+                        const icon = sidebarToggle.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                }
+            }, 250);
+        });
+
+        // Handle active menu items
+        const currentPath = window.location.pathname;
+        const menuLinks = sidebar.querySelectorAll('.sidebar-link, .submenu-link');
+
+        menuLinks.forEach(link => {
+            link.classList.remove('active');
+
+            // Check if current path matches link href
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+
+                // If it's a submenu link, expand its parent
+                const parentCollapse = link.closest('.collapse');
+                if (parentCollapse) {
+                    const collapseInstance = bootstrap.Collapse.getInstance(parentCollapse);
+                    if (collapseInstance) {
+                        collapseInstance.show();
+                    }
+
+                    // Also activate the parent menu item
+                    const parentLink = parentCollapse.previousElementSibling;
+                    if (parentLink && parentLink.classList.contains('sidebar-link')) {
+                        parentLink.classList.add('active');
+                        parentLink.setAttribute('aria-expanded', 'true');
+                    }
+                }
+            }
+        });
+
+        // Auto close other menus when opening one (accordion behavior)
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        if (sidebarMenu) {
+            sidebarMenu.addEventListener('show.bs.collapse', function (event) {
+                // Only close other menus on mobile or when sidebar is collapsed
+                if (window.innerWidth <= 992 || sidebar.classList.contains('collapsed')) {
+                    const openCollapses = sidebarMenu.querySelectorAll('.collapse.show');
+                    openCollapses.forEach(collapse => {
+                        if (collapse !== event.target) {
+                            const collapseInstance = bootstrap.Collapse.getInstance(collapse);
+                            if (collapseInstance) {
+                                collapseInstance.hide();
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Add data-title attributes for tooltips
+        const menuItems = sidebar.querySelectorAll('.sidebar-link, .submenu-link');
+        menuItems.forEach(item => {
+            const text = item.querySelector('span');
+            if (text && !item.getAttribute('data-title')) {
+                item.setAttribute('data-title', text.textContent.trim());
+            }
+        });
+    });
+</script> -->

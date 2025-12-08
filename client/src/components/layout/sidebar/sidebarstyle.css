@@ -1,0 +1,342 @@
+/* Sidebar.css */
+
+.sidebar-drawer .MuiDrawer-paper {
+  width: 100%;
+  max-width: 400px;
+  /* background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); */
+  background-color: white;
+  color: #000000;
+  padding: 0;
+}
+
+.sidebar-content {
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Header */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid #333;
+}
+
+.sidebar-title {
+  font-weight: 700 !important;
+  font-size: 1.5rem !important;
+  color: #000000;
+  margin: 0 !important;
+}
+
+.close-button {
+  color: #000000 !important;
+  padding: 8px !important;
+}
+
+.close-button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Login Section */
+.login-section {
+  padding: 24px;
+  background: linear-gradient(135deg, #e91e63 0%, #f44336 100%);
+  margin: 0;
+}
+
+.login-title {
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  color: #ffffff;
+  margin-bottom: 16px !important;
+  text-align: center;
+}
+
+.login-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.login-button {
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+  text-transform: none !important;
+  border-radius: 25px !important;
+  padding: 8px 24px !important;
+  font-weight: 600 !important;
+  flex: 1;
+}
+
+.login-button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.register-button {
+  background-color: #ffffff !important;
+  color: #e91e63 !important;
+  text-transform: none !important;
+  border-radius: 25px !important;
+  padding: 8px 24px !important;
+  font-weight: 600 !important;
+  flex: 1;
+}
+
+.register-button:hover {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Sections */
+.section {
+  padding: 0;
+}
+
+.section-title {
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  color: #888;
+  padding: 16px 24px 8px 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.section-divider {
+  background-color: #333 !important;
+  margin: 8px 0 !important;
+}
+
+/* Menu Lists */
+.menu-list,
+.submenu-list {
+  padding: 0 !important;
+}
+
+.menu-item,
+.submenu-item {
+  padding: 12px 24px !important;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.menu-item:hover,
+.submenu-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.menu-icon {
+  min-width: 48px !important;
+  color: #e91e63;
+}
+
+.menu-icon .MuiSvgIcon-root {
+  font-size: 1.5rem;
+}
+
+.submenu-icon {
+  min-width: 40px !important;
+  color: #888;
+}
+
+.submenu-icon .MuiSvgIcon-root {
+  font-size: 1.25rem;
+}
+
+.menu-text .MuiListItemText-primary,
+.submenu-text .MuiListItemText-primary {
+  font-weight: 500 !important;
+  font-size: 1rem !important;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.menu-text .MuiListItemText-secondary,
+.submenu-text .MuiListItemText-secondary {
+  font-size: 0.8rem !important;
+  color: #aaa;
+  line-height: 1.3;
+}
+
+.submenu-item {
+  padding-left: 64px !important;
+}
+
+.submenu-text .MuiListItemText-primary {
+  font-size: 0.9rem !important;
+  color: #ccc;
+}
+
+/* Badge Styles */
+.menu-icon .MuiBadge-badge {
+  background-color: #f44336;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+/* Responsive Design */
+
+/* Large screens (≥1200px) */
+@media (min-width: 1200px) {
+  .sidebar-drawer .MuiDrawer-paper {
+    max-width: 380px;
+  }
+}
+
+/* Medium screens (900px - 1199px) */
+@media (min-width: 900px) and (max-width: 1199px) {
+  .sidebar-drawer .MuiDrawer-paper {
+    max-width: 360px;
+  }
+}
+
+/* Small screens (600px - 899px) */
+@media (max-width: 899px) {
+  .sidebar-drawer .MuiDrawer-paper {
+    max-width: 340px;
+  }
+
+  .sidebar-header {
+    padding: 16px 20px;
+  }
+
+  .login-section {
+    padding: 20px;
+  }
+
+  .menu-item,
+  .submenu-item {
+    padding: 10px 20px !important;
+  }
+
+  .submenu-item {
+    padding-left: 60px !important;
+  }
+}
+
+/* Extra small screens (0px - 599px) */
+@media (max-width: 599px) {
+  .sidebar-drawer .MuiDrawer-paper {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .sidebar-header {
+    padding: 12px 16px;
+  }
+
+  .sidebar-title {
+    font-size: 1.3rem !important;
+  }
+
+  .login-section {
+    padding: 16px;
+  }
+
+  .login-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .login-button,
+  .register-button {
+    padding: 10px 24px !important;
+  }
+
+  .menu-item,
+  .submenu-item {
+    padding: 8px 16px !important;
+  }
+
+  .submenu-item {
+    padding-left: 56px !important;
+  }
+
+  .menu-text .MuiListItemText-primary,
+  .submenu-text .MuiListItemText-primary {
+    font-size: 0.95rem !important;
+  }
+
+  .menu-text .MuiListItemText-secondary,
+  .submenu-text .MuiListItemText-secondary {
+    font-size: 0.75rem !important;
+  }
+}
+
+/* Very small screens (0px - 399px) */
+@media (max-width: 399px) {
+  .sidebar-drawer .MuiDrawer-paper {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .sidebar-header {
+    padding: 10px 12px;
+  }
+
+  .login-section {
+    padding: 12px;
+  }
+
+  .menu-item,
+  .submenu-item {
+    padding: 6px 12px !important;
+  }
+
+  .submenu-item {
+    padding-left: 52px !important;
+  }
+
+  .menu-icon {
+    min-width: 44px !important;
+  }
+
+  .submenu-icon {
+    min-width: 36px !important;
+  }
+}
+
+/* Scrollbar Styling */
+.sidebar-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: #e91e63;
+  border-radius: 3px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: #f44336;
+}
+
+/* Animation for drawer */
+.sidebar-drawer .MuiDrawer-paper {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Focus states for accessibility */
+.close-button:focus-visible,
+.menu-item:focus-visible,
+.submenu-item:focus-visible,
+.login-button:focus-visible,
+.register-button:focus-visible {
+  outline: 2px solid #e91e63;
+  outline-offset: 2px;
+}

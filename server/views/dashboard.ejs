@@ -1,0 +1,1089 @@
+<!-- dashboard.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --sidebar-width: 250px;
+            --collapsed-sidebar-width: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+
+        /* Main Layout Container */
+        #layout-wrapper {
+            display: flex;
+            /* min-height: 100vh; */
+        }
+
+        /* Sidebar Styles - Fixed to left */
+        #sidebar-wrapper {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            transition: all 0.3s;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        /* Mobile sidebar overlay */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1045;
+            display: none;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        #sidebar-wrapper.collapsed {
+            width: var(--collapsed-sidebar-width);
+        }
+
+        /* Navbar Styles - Fixed to top */
+        #navbar-wrapper {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: 56px;
+            z-index: 999;
+            transition: left 0.3s;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2e59d9 100%);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        #navbar-wrapper.expanded {
+            left: var(--collapsed-sidebar-width);
+        }
+
+        /* Main Content Area */
+        #content-wrapper {
+            margin-left: var(--sidebar-width);
+            margin-top: 56px;
+            padding: 20px;
+            min-height: calc(100vh - 56px);
+            transition: margin-left 0.3s;
+            background-color: #f8f9fc;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        #content-wrapper.expanded {
+            margin-left: var(--collapsed-sidebar-width);
+            width: calc(100% - var(--collapsed-sidebar-width));
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            color: #5a5c69;
+            font-weight: 600;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 30px;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #e3e6f0;
+            font-weight: 600;
+            color: #4e73df;
+            padding: 15px 20px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-card .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        /* Table */
+        .table-responsive {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: #f8f9fc;
+            border-bottom: 2px solid #e3e6f0;
+            color: #5a5c69;
+            font-weight: 600;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+
+        /* Buttons */
+        .btn-generate {
+            background: linear-gradient(135deg, var(--success-color) 0%, #17a673 100%);
+            border: none;
+            padding: 10px 25px;
+            font-weight: 600;
+            color: white;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(28, 200, 138, 0.3);
+        }
+
+        /* Badges */
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #17a673 100%);
+        }
+
+        .badge.bg-warning {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #dda20a 100%);
+        }
+
+        .badge.bg-danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #be2617 100%);
+        }
+
+        /* Chart Canvas */
+        canvas {
+            max-width: 100%;
+        }
+
+
+        /* Global CSS for sidebar functionality */
+        #layout-wrapper {
+            position: relative;
+        }
+
+        #content-wrapper {
+            margin-left: 250px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+        }
+
+        /* When sidebar is collapsed on desktop */
+        .sidebar.collapsed~#content-wrapper {
+            margin-left: 70px;
+        }
+
+        body.sidebar-open {
+            overflow: hidden;
+        }
+
+        /* Mobile styles */
+        @media (max-width: 992px) {
+            #content-wrapper {
+                margin-left: 0 !important;
+                width: 100%;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            /* Hide sidebar by default on mobile */
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            /* Show sidebar when toggled on mobile */
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            #sidebar-wrapper.show {
+                transform: translateX(0);
+            }
+
+            #navbar-wrapper {
+                left: 0 !important;
+                transition: left 0.3s ease;
+            }
+
+            #content-wrapper {
+                margin-left: 0 !important;
+                width: 100% !important;
+                transition: margin-left 0.3s ease;
+            }
+
+            #sidebarToggle {
+                display: inline-block !important;
+            }
+        }
+
+        /* Ensure navbar toggle button is visible on mobile */
+        /* @media (max-width: 992px) {
+            #sidebarToggle {
+                display: inline-block !important;
+            }
+        } */
+
+        @media (max-width: 576px) {
+    /* Fix navbar items spacing on small screens */
+    .navbar .container-fluid {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+    
+    /* Adjust navbar brand and spacing */
+    .navbar-brand {
+        margin-right: 5px !important;
+        font-size: 0.9rem;
+    }
+    
+    /* Reduce padding for navbar items */
+    .navbar .nav-link {
+        padding: 0.25rem 0.5rem;
+    }
+    
+    /* Fix user dropdown alignment */
+    .nav-item.dropdown .dropdown-toggle::after {
+        display: none; /* Hide dropdown arrow on mobile */
+    }
+}
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                transform: translateX(-100%);
+            }
+
+            #sidebar-wrapper.show {
+                transform: translateX(0);
+            }
+
+            #navbar-wrapper {
+                left: 0;
+            }
+
+            #content-wrapper {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .stat-card {
+                margin-bottom: 15px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Add pagination styles */
+        .pagination {
+            margin: 20px 0;
+        }
+
+        .pagination .page-link {
+            color: #4e73df;
+            border: 1px solid #dddfeb;
+            padding: 0.5rem 0.75rem;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #4e73df;
+            border-color: #4e73df;
+            color: white;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+            background-color: #fff;
+            border-color: #dddfeb;
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-spinner.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Layout Wrapper -->
+    <div id="layout-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <%- include('./partials/sidebar.ejs') %>
+        </div>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+
+        
+        <!-- Navbar -->
+        <div id="navbar-wrapper">
+            <%- include('./partials/navbar.ejs') %>
+        </div>
+        
+        <!-- Main Content -->
+        <div id="content-wrapper">
+           
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h1><i class="fas fa-tachometer-alt me-2"></i><%= admin.name%> Dashboard</h1>
+                            <p class="text-muted">Welcome to BookMyCinema Management Dashboard</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button class="btn btn-generate text-white">
+                                <i class="fas fa-download me-2"></i>Generate Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="stat-card"
+                            style="background: linear-gradient(135deg, var(--primary-color) 0%, #2e59d9 100%);">
+                            <div class="row align-items-center">
+                                <div class="col-8">
+                                    <div class="stat-value"><%= stats.todayBookings %></div>
+                                    <div class="stat-label">Today's Bookings</div>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <i class="fas fa-ticket-alt stat-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #1cc88a 0%, #17a673 100%);">
+                            <div class="row align-items-center">
+                                <div class="col-8">
+                                    <div class="stat-value">$<%= stats.totalRevenue %></div>
+                                    <div class="stat-label">Revenue</div>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <i class="fas fa-dollar-sign stat-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #36b9cc 0%, #258391 100%);">
+                            <div class="row align-items-center">
+                                <div class="col-8">
+                                    <div class="stat-value"><%= stats.activeMovies %></div>
+                                    <div class="stat-label">Active Movies</div>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <i class="fas fa-film stat-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%);">
+                            <div class="row align-items-center">
+                                <div class="col-8">
+                                    <div class="stat-value"><%= stats.occupancyRate %>%</div>
+                                    <div class="stat-label">Occupancy Rate</div>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <i class="fas fa-chart-line stat-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts and Tables -->
+                <div class="row">
+                    <div class="col-xl-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-chart-bar me-2"></i>Booking Trends
+                            </div>
+                            <div class="card-body">
+                                <canvas id="bookingChart" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-share-alt me-2"></i>Direct Social Referral
+                            </div>
+                            <div class="card-body">
+                                <canvas id="referralChart" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Bookings Table -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-table me-2"></i>Recent Bookings
+                                </div>
+                                <div>
+                                    <select id="statusFilter" class="form-select form-select-sm" style="width: 150px;">
+                                        <option value="Paid" <%=currentStatus==='Paid' ? 'selected' : '' %>>Paid Only
+                                        </option>
+                                       
+                                        <option value="Cancelled" <%=currentStatus==='Cancelled' ? 'selected' : '' %>
+                                            >Cancelled</option>
+                                        <option value="all" <%=currentStatus==='all' ? 'selected' : '' %>>All Status
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <!-- Loading spinner -->
+                                <div class="loading-spinner" id="loadingSpinner">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2 text-muted">Loading bookings...</p>
+                                </div>
+
+                                <!-- Bookings Table -->
+                                <div class="table-responsive" id="bookingsTableContainer">
+                                    <!-- Table will be loaded dynamically -->
+                                </div>
+
+                                <!-- Pagination -->
+                                <nav aria-label="Page navigation" id="paginationContainer">
+                                    <!-- Pagination will be loaded dynamically -->
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <%- include('./partials/footer.ejs') %>
+        
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Initialize charts
+        let bookingChart = null;
+        let referralChart = null;
+
+        // Global variables
+        let currentPage = 1;
+        let totalPages = 1;
+        let currentStatusFilter = 'all'; // Show all bookings by default
+        const itemsPerPage = 10;
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('📊 Dashboard loaded');
+
+            // Initialize charts
+            initializeCharts();
+
+            // Load all bookings initially
+            loadBookings(currentPage, currentStatusFilter);
+
+            // Status filter change event
+            document.getElementById('statusFilter').addEventListener('change', function (e) {
+                currentStatusFilter = e.target.value;
+                currentPage = 1;
+                loadBookings(currentPage, currentStatusFilter);
+            });
+        });
+
+        // Function to initialize charts
+        function initializeCharts() {
+            // Booking Trends Chart
+            const bookingCtx = document.getElementById('bookingChart');
+            if (bookingCtx) {
+                bookingChart = new Chart(bookingCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Bookings',
+                            data: [65, 59, 80, 81, 56, 55, 40],
+                            backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                            borderColor: 'rgba(78, 115, 223, 1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: true,
+                                    drawBorder: false
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    display: true,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    stepSize: 20
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Direct Social Referral Chart
+            const referralCtx = document.getElementById('referralChart');
+            if (referralCtx) {
+                referralChart = new Chart(referralCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Facebook', 'Instagram', 'Twitter', 'YouTube', 'Others'],
+                        datasets: [{
+                            data: [35, 25, 20, 12, 8],
+                            backgroundColor: [
+                                'rgba(78, 115, 223, 0.8)',
+                                'rgba(231, 74, 59, 0.8)',
+                                'rgba(28, 200, 138, 0.8)',
+                                'rgba(246, 194, 62, 0.8)',
+                                'rgba(108, 117, 125, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgba(78, 115, 223, 1)',
+                                'rgba(231, 74, 59, 1)',
+                                'rgba(28, 200, 138, 1)',
+                                'rgba(246, 194, 62, 1)',
+                                'rgba(108, 117, 125, 1)'
+                            ],
+                            borderWidth: 2,
+                            hoverOffset: 15
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    font: {
+                                        size: 12
+                                    },
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        const value = context.raw || 0;
+                                        label += value + '%';
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '70%'
+                    }
+                });
+            }
+        }
+
+        // Function to load bookings
+        async function loadBookings(page = 1, status = 'all') {
+            console.log(`📡 Loading bookings: Page ${page}, Status: ${status}`);
+
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const tableContainer = document.getElementById('bookingsTableContainer');
+            const paginationContainer = document.getElementById('paginationContainer');
+
+            // Show loading spinner
+            loadingSpinner.classList.add('active');
+            tableContainer.innerHTML = '';
+            paginationContainer.innerHTML = '';
+
+            try {
+                // Call the API endpoint
+                const apiUrl = `/booking/admin/all?page=${page}&limit=${itemsPerPage}&status=${status}`;
+                console.log('API URL:', apiUrl);
+
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                console.log('API Response:', result);
+
+                if (result.success) {
+                    const { bookings, pagination } = result.data;
+
+                    if (!bookings || bookings.length === 0) {
+                        showNoBookingsMessage();
+                        return;
+                    }
+
+                    currentPage = pagination.currentPage || page;
+                    totalPages = pagination.totalPages || 1;
+
+                    // Render the table with bookings data
+                    renderBookingsTable(bookings);
+
+                    // Render pagination
+                    renderPagination(pagination);
+
+                } else {
+                    showErrorMessage(result.message || 'Failed to load bookings');
+                }
+            } catch (error) {
+                console.error('❌ Error loading bookings:', error);
+                showErrorMessage('Error loading bookings: ' + error.message);
+            } finally {
+                loadingSpinner.classList.remove('active');
+            }
+        }
+
+        // Function to render bookings table
+        function renderBookingsTable(bookings) {
+            const tableContainer = document.getElementById('bookingsTableContainer');
+
+            let tableHTML = `
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>User name</th>
+                        <th>Movie</th>
+                        <th>Theater</th>
+                        <th>Show Time</th>
+                        <th>Seats</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Booked At</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+            bookings.forEach(booking => {
+                // User info
+                const userName = booking.user?.name || booking.user?.username || 'N/A';
+
+                // Movie info
+                const movieTitle = booking.movie?.title || booking.movie?.moviename || 'N/A';
+                const moviePoster = booking.movie?.poster || '/images/default-movie.jpg';
+
+                // Theater info
+                const theaterName = booking.theater?.name || booking.theater?.theatername || 'N/A';
+                const theaterLocation = booking.theater?.location || booking.theater?.district || '';
+
+                // Show time
+                let showTime = 'N/A';
+                if (booking.show && booking.show.date) {
+                    const date = new Date(booking.show.date);
+                    showTime = date.toLocaleDateString();
+                    if (booking.show.timeSlots && booking.show.timeSlots.length > 0) {
+                        showTime += ' ' + booking.show.timeSlots[0];
+                    }
+                }
+
+                // Seats
+                const seats = Array.isArray(booking.seats) ? booking.seats : [];
+
+                // Amount
+                const amount = booking.totalAmount ? `$${booking.totalAmount.toFixed(2)}` : '$0.00';
+
+                // Status
+                const paymentStatus = booking.paymentStatus || 'Unknown';
+                const statusBadge = getStatusBadge(paymentStatus);
+
+                // Booked At
+                let bookedAt = 'N/A';
+                if (booking.bookedAt) {
+                    bookedAt = new Date(booking.bookedAt).toLocaleDateString();
+                }
+
+                tableHTML += `
+                <tr>
+                    <td>${escapeHtml(userName)}</td>
+                    <td>
+                        <div class="d-flex align-items-center justify-content-center">
+                            <img src="${escapeHtml(moviePoster)}" 
+                                 alt="${escapeHtml(movieTitle)}" 
+                                 class="movie-poster me-2"
+                                 style="width:100px; height:50px"
+                                 onerror="this.src='/images/default-movie.jpg'">
+                            <div>
+                                <strong>${escapeHtml(movieTitle)}</strong>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <strong>${escapeHtml(theaterName)}</strong><br>
+                        <small class="text-muted">${escapeHtml(theaterLocation)}</small>
+                    </td>
+                    <td>${escapeHtml(showTime)}</td>
+                    <td>
+                        <div class="seat-badges">
+                            ${seats.map(seat => `
+                                <span class="badge bg-info text-dark">${escapeHtml(seat)}</span>
+                            `).join('')}
+                        </div>
+                        <small class="text-muted">${seats.length} seat(s)</small>
+                    </td>
+                    <td>
+                        <strong>${amount}</strong>
+                    </td>
+                    <td>
+                        <span class="badge ${statusBadge.class}">
+                            ${statusBadge.icon}
+                            ${escapeHtml(paymentStatus)}
+                        </span>
+                    </td>
+                    <td>
+                        ${bookedAt}
+                    </td>
+                </tr>
+            `;
+            });
+
+            tableHTML += `
+                </tbody>
+            </table>
+        `;
+
+            tableContainer.innerHTML = tableHTML;
+        }
+
+        // Function to get status badge
+        function getStatusBadge(paymentStatus) {
+            paymentStatus = paymentStatus || 'Unknown';
+
+            let badgeClass = 'bg-secondary';
+            let icon = '<i class="fas fa-question-circle me-1"></i>';
+
+            switch (paymentStatus.toLowerCase()) {
+                case 'paid':
+                    badgeClass = 'bg-success';
+                    icon = '<i class="fas fa-check-circle me-1"></i>';
+                    break;
+                case 'pending':
+                    badgeClass = 'bg-warning text-dark';
+                    icon = '<i class="fas fa-clock me-1"></i>';
+                    break;
+                case 'cancelled':
+                    badgeClass = 'bg-danger';
+                    icon = '<i class="fas fa-times-circle me-1"></i>';
+                    break;
+                case 'unpaid':
+                    badgeClass = 'bg-secondary';
+                    icon = '<i class="fas fa-exclamation-circle me-1"></i>';
+                    break;
+            }
+
+            return { class: badgeClass, icon: icon };
+        }
+
+        // Function to render pagination
+        function renderPagination(pagination) {
+            const paginationContainer = document.getElementById('paginationContainer');
+
+            if (!pagination || pagination.totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = `
+            <ul class="pagination justify-content-center mt-3">
+                <li class="page-item ${pagination.currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${pagination.currentPage - 1})">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+        `;
+
+            // Show limited page numbers
+            const maxPagesToShow = 5;
+            let startPage = Math.max(1, pagination.currentPage - Math.floor(maxPagesToShow / 2));
+            let endPage = startPage + maxPagesToShow - 1;
+
+            if (endPage > pagination.totalPages) {
+                endPage = pagination.totalPages;
+                startPage = Math.max(1, endPage - maxPagesToShow + 1);
+            }
+
+            if (startPage > 1) {
+                paginationHTML += `
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="changePage(1)">1</a>
+                </li>
+                ${startPage > 2 ? '<li class="page-item disabled"><span class="page-link">...</span></li>' : ''}
+            `;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === pagination.currentPage) {
+                    paginationHTML += `
+                    <li class="page-item active">
+                        <span class="page-link">${i}</span>
+                    </li>
+                `;
+                } else {
+                    paginationHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                    </li>
+                `;
+                }
+            }
+
+            if (endPage < pagination.totalPages) {
+                paginationHTML += `
+                ${endPage < pagination.totalPages - 1 ? '<li class="page-item disabled"><span class="page-link">...</span></li>' : ''}
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="changePage(${pagination.totalPages})">${pagination.totalPages}</a>
+                </li>
+            `;
+            }
+
+            paginationHTML += `
+                <li class="page-item ${pagination.currentPage === pagination.totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${pagination.currentPage + 1})">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+            <div class="text-center text-muted mt-2">
+                Page ${pagination.currentPage} of ${pagination.totalPages} • 
+                Showing ${pagination.itemsPerPage * (pagination.currentPage - 1) + 1} 
+                to ${Math.min(pagination.itemsPerPage * pagination.currentPage, pagination.totalItems)} 
+                of ${pagination.totalItems} bookings
+            </div>
+        `;
+
+            paginationContainer.innerHTML = paginationHTML;
+        }
+
+        // Function to change page
+        function changePage(page) {
+            if (page < 1 || page > totalPages) return;
+            loadBookings(page, currentStatusFilter);
+        }
+
+        // Function to refresh bookings
+        function refreshBookings() {
+            console.log('Refreshing bookings...');
+            loadBookings(currentPage, currentStatusFilter);
+        }
+
+        // Function to show error message
+        function showErrorMessage(message) {
+            const tableContainer = document.getElementById('bookingsTableContainer');
+            tableContainer.innerHTML = `
+            <div class="alert alert-danger text-center py-4">
+                <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                <h5>Error Loading Bookings</h5>
+                <p class="mb-0">${escapeHtml(message)}</p>
+                <button class="btn btn-primary mt-3" onclick="refreshBookings()">
+                    <i class="fas fa-redo me-1"></i>Try Again
+                </button>
+            </div>
+        `;
+        }
+
+        // Function to show no bookings message
+        function showNoBookingsMessage() {
+            const tableContainer = document.getElementById('bookingsTableContainer');
+            tableContainer.innerHTML = `
+            <div class="text-center py-5">
+                <i class="fas fa-ticket-alt fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No Bookings Found</h5>
+                <p class="text-muted">There are no bookings to display at the moment.</p>
+                ${currentStatusFilter !== 'all' ?
+                    `<button class="btn btn-outline-primary mt-2" onclick="showAllBookings()">
+                        Show All Bookings
+                    </button>` : ''
+                }
+            </div>
+        `;
+        }
+
+        // Function to show all bookings
+        function showAllBookings() {
+            document.getElementById('statusFilter').value = 'all';
+            currentStatusFilter = 'all';
+            currentPage = 1;
+            loadBookings(currentPage, currentStatusFilter);
+        }
+
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,161 @@
+/* OTP Popup Styles */
+.otp-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 1rem;
+}
+
+.otp-popup-container {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 28rem;
+  width: 100%;
+  padding: 1.5rem;
+}
+
+.otp-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.otp-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.otp-subtitle {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.otp-inputs-container {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.otp-input {
+  width: 3rem;
+  height: 3rem;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border: 2px solid #d1d5db;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.otp-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.otp-input:disabled {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+}
+
+.otp-timer {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.otp-timer-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.otp-timer-time {
+  font-weight: 600;
+}
+
+.otp-timer-time.expiring {
+  color: #ef4444;
+}
+
+.otp-timer-time.normal {
+  color: #10b981;
+}
+
+.otp-message {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.otp-message.error {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+}
+
+.otp-message.success {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #16a34a;
+}
+
+.otp-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.otp-button {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.otp-button.primary {
+  background-color: #2563eb;
+  color: white;
+}
+
+.otp-button.primary:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.otp-button.secondary {
+  background-color: #4b5563;
+  color: white;
+}
+
+.otp-button.secondary:hover:not(:disabled) {
+  background-color: #374151;
+}
+
+.otp-button.outline {
+  background-color: white;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+}
+
+.otp-button.outline:hover:not(:disabled) {
+  background-color: #f9fafb;
+}
+
+.otp-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}

@@ -1,0 +1,539 @@
+<!-- views/details/show.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> </title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+         :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --sidebar-width: 250px;
+            --collapsed-sidebar-width: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Main Layout Container */
+        #layout-wrapper {
+            display: flex;
+            /* min-height: 100vh; */
+        }
+
+        /* Sidebar Styles - Fixed to left */
+        #sidebar-wrapper {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            transition: all 0.3s;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        #sidebar-wrapper.collapsed {
+            width: var(--collapsed-sidebar-width);
+        }
+
+        /* Navbar Styles - Fixed to top */
+        #navbar-wrapper {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: 56px;
+            z-index: 999;
+            transition: left 0.3s;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2e59d9 100%);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        #navbar-wrapper.expanded {
+            left: var(--collapsed-sidebar-width);
+        }
+
+        /* Main Content Area */
+        #content-wrapper {
+            margin-left: var(--sidebar-width);
+            margin-top: 56px;
+            padding: 20px;
+            min-height: calc(100vh - 56px);
+            transition: margin-left 0.3s;
+            background-color: #f8f9fc;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        #content-wrapper.expanded {
+            margin-left: var(--collapsed-sidebar-width);
+            width: calc(100% - var(--collapsed-sidebar-width));
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            color: #5a5c69;
+            font-weight: 600;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 30px;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #e3e6f0;
+            font-weight: 600;
+            color: #4e73df;
+            padding: 15px 20px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-card .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        /* Table */
+        .table-responsive {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: #f8f9fc;
+            border-bottom: 2px solid #e3e6f0;
+            color: #5a5c69;
+            font-weight: 600;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--success-color) 0%, #17a673 100%);
+            border: none;
+            padding: 10px 25px;
+            font-weight: 600;
+            color: white;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #c92828 100%);
+            border: none;
+            padding: 10px 25px;
+            font-weight: 600;
+            color: white;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .top-cancel {
+            /* background: linear-gradient(135deg, var(--danger-color) 0%, #c92828 100%); */
+            border: none;
+            padding: 10px 25px;
+            font-weight: 600;
+            color: rgb(0, 0, 0);
+            border-radius: 5px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(28, 200, 138, 0.3);
+        }
+
+        /* Badges */
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #17a673 100%);
+        }
+
+        .badge.bg-warning {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #dda20a 100%);
+        }
+
+        .badge.bg-danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #be2617 100%);
+        }
+
+        /* Chart Canvas */
+        canvas {
+            max-width: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                transform: translateX(-100%);
+            }
+
+            #sidebar-wrapper.show {
+                transform: translateX(0);
+            }
+
+            #navbar-wrapper {
+                left: 0;
+            }
+
+            #content-wrapper {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .stat-card {
+                margin-bottom: 15px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Layout Wrapper -->
+    <div id="layout-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <%- include('../partials/sidebar.ejs') %>
+        </div>
+
+        <!-- Navbar -->
+        <div id="navbar-wrapper">
+            <%- include('../partials/navbar.ejs') %>
+        </div>
+
+        <!-- Main Content -->
+        <div id="content-wrapper">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h1><i class="fas fa-calendar-alt me-2"></i>Show Details</h1>
+                        <p class="text-muted">Manage all movie shows in your cinemas</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <a href="/admin/cinemas/create-cinema" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Create New Show
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Display Messages -->
+            <% if (success) { %>
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <%= success %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+            
+            <% if (error) { %>
+                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <%= error %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+
+            <!-- Shows Table -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-table me-2"></i>All Shows
+                    <span class="badge bg-primary ms-2"><%= shows.length %> shows</span>
+                </div>
+                <div class="card-body">
+                    <% if (shows && shows.length > 0) { %>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Movie</th>
+                                        <th>Room Details</th>
+                                        <th>Screen</th>
+                                        <th>Date</th>
+                                        <th>Time Slots</th>
+                                        <th>Price Categories</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% shows.forEach((show) => { %>
+                                        <tr>
+                                            <!-- Movie -->
+                                            <td data-label="Movie">
+                                                <div class="movie-info">
+                                                    <i class="fas fa-film me-2"></i>
+                                                    <% if (show.movieId && show.movieId.moviename) { %>
+                                                        <%= show.movieId.moviename %>
+                                                    <% } else if (typeof show.movieId === 'string') { %>
+                                                        Movie ID: <%= show.movieId.substring(0, 8) %>...
+                                                    <% } else { %>
+                                                        Movie ID: <%= show.movieId %>
+                                                    <% } %>
+                                                </div>
+                                            </td>
+                                            
+                                            <!-- Room Details -->
+                                            <td data-label="Room Details">
+                                                <div class="room-info">
+                                                    <strong><i class="fas fa-door-closed me-2"></i><%= show.room.name %></strong>
+                                                    <div class="small mt-1">
+                                                        <i class="fas fa-border-all me-1"></i>
+                                                        <%= show.room.rows %> rows × <%= show.room.columns %> columns
+                                                    </div>
+                                                    <div class="small">
+                                                        <i class="fas fa-chair me-1"></i>
+                                                        Total Seats: <%= show.totalSeats || (show.room.rows * show.room.columns) %>
+                                                        <% if (show.bookedSeats && show.bookedSeats.length > 0) { %>
+                                                            <span class="text-danger ms-2">
+                                                                (<%= show.bookedSeats.length %> booked)
+                                                            </span>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            
+                                            <!-- Screen -->
+                                            <td data-label="Screen">
+                                                <div class="screen-info">
+                                                    <i class="fas fa-tv me-2"></i>
+                                                    Screen <%= show.screenNumber %>
+                                                </div>
+                                            </td>
+                                            
+                                            <!-- Date -->
+                                            <td data-label="Date">
+                                                <div class="date-info">
+                                                    <i class="fas fa-calendar me-2"></i>
+                                                    <%= new Date(show.date).toLocaleDateString('en-US', { 
+                                                        weekday: 'short',
+                                                        year: 'numeric',
+                                                        month: 'short',
+                                                        day: 'numeric'
+                                                    }) %>
+                                                </div>
+                                                <div class="small text-muted mt-1">
+                                                    <i class="fas fa-clock me-2"></i>
+                                                    Created: <%= new Date(show.createdAt).toLocaleDateString() %>
+                                                </div>
+                                            </td>
+                                            
+                                            <!-- Time Slots -->
+                                            <td data-label="Time Slots">
+                                                <% if (show.timeSlots && show.timeSlots.length > 0) { %>
+                                                    <div class="d-flex flex-wrap gap-1">
+                                                        <% show.timeSlots.forEach(slot => { %>
+                                                            <% if (slot.time) { %>
+                                                                <span class="time-slot-badge">
+                                                                    <i class="fas fa-clock me-1"></i><%= slot.time %>
+                                                                </span>
+                                                            <% } %>
+                                                        <% }); %>
+                                                    </div>
+                                                    <div class="small text-muted mt-1">
+                                                        Total: <%= show.timeSlots.length %> time slots
+                                                    </div>
+                                                <% } else { %>
+                                                    <span class="text-muted small">No time slots</span>
+                                                <% } %>
+                                            </td>
+                                            
+                                            <!-- Available Categories -->
+                                            <td data-label="Price Categories">
+                                                <% if (show.availableCategories && show.availableCategories.length > 0) { %>
+                                                    <div class="d-flex flex-wrap gap-1">
+                                                        <% show.availableCategories.forEach(cat => { %>
+                                                            <span class="category-badge" title="<%= cat.category %>: ₹<%= cat.price %>">
+                                                                <%= cat.category %>: ₹<%= cat.price %>
+                                                            </span>
+                                                        <% }); %>
+                                                    </div>
+                                                    <div class="small text-muted mt-1">
+                                                        Total: <%= show.availableCategories.length %> categories
+                                                    </div>
+                                                <% } else if (show.timeSlots && show.timeSlots.length > 0 && show.timeSlots[0].availableCategories) { %>
+                                                    <div class="d-flex flex-wrap gap-1">
+                                                        <% show.timeSlots[0].availableCategories.forEach(cat => { %>
+                                                            <span class="category-badge" title="<%= cat.category %>: ₹<%= cat.price %>">
+                                                                <%= cat.category %>: ₹<%= cat.price %>
+                                                            </span>
+                                                        <% }); %>
+                                                    </div>
+                                                    <div class="small text-muted mt-1">
+                                                        Total: <%= show.timeSlots[0].availableCategories.length %> categories
+                                                    </div>
+                                                <% } else { %>
+                                                    <span class="text-muted small">No categories</span>
+                                                <% } %>
+                                            </td>
+                                            
+                                            <!-- Actions -->
+                                            <td data-label="Actions">
+                                                <div class="action-buttons">
+                                                    <!-- Edit Button -->
+                                                    <a href="/admin/shows/edit/<%= show._id %>" class="btn btn-edit">
+                                                        <i class="fas fa-edit me-1"></i>Edit
+                                                    </a>
+                                                    
+                                                    <!-- Delete Button -->
+                                                    <form method="POST" action="/shows/delete/<%= show._id %>" style="display: inline;">
+                                                        <input type="hidden" name="_method" value="DELETE">
+                                                        <button type="submit" class="btn btn-delete" 
+                                                                onclick="return confirm('Are you sure you want to delete this show? This action cannot be undone.');">
+                                                            <i class="fas fa-trash me-1"></i>Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Show Count -->
+                        <div class="mt-3 text-center text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Showing all <%= shows.length %> shows
+                        </div>
+                        
+                    <% } else { %>
+                        <!-- Empty State -->
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="fas fa-calendar-times fa-4x text-muted"></i>
+                            </div>
+                            <h4>No Shows Found</h4>
+                            <p class="text-muted mb-4">
+                                You haven't created any shows yet
+                            </p>
+                            <a href="/admin/shows/create" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Create Your First Show
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
